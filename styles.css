@@ -1,12 +1,10 @@
-<style>
-    /* Prevent the elements from blinking before the animation starts */
-    [anim-group] {
-        opacity: 0;
-    }
+/* Prevent the elements from blinking before the animation starts */
+[anim-group] {
+    opacity: 0;
+}
 
-    .char,
-    .word,
-    .line {
-        perspective: 2000px !important;
-    }
-</style>
+.char,
+.word,
+.line {
+    perspective: 2000px !important;
+}
