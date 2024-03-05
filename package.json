@@ -1,0 +1,19 @@
+{
+  "name": "gsap-animation-library",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild ./src/index.ts --bundle --minify --sourcemap --watch --outfile=dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "split-type": "^0.3.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.1"
+  }
+}
