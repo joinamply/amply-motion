@@ -48,7 +48,6 @@ animationGroups.forEach((group, groupIndex) => {
         switch (animType) {
             // Fades
             case "fade-in":
-                console.log(elToAnimate);
                 timeline.from(elToAnimate, { opacity: opacity, duration: duration, ease: ease, delay: delay, stagger: stagger }, 0);
                 break;
             case "fade-out":
@@ -110,11 +109,11 @@ animationGroups.forEach((group, groupIndex) => {
             // Text Slides
             case "text-slide-in":
                 posVector = updatePosVector(direction, posVector);
-                timeline.from(elToAnimate, { positionX: posVector[0], positionY: posVector[1], opacity: opacity, duration: duration, stagger: stagger, ease: ease, delay: delay }, 0);
+                timeline.from(elToAnimate, { x: posVector[0], y: posVector[1], opacity: opacity, duration: duration, stagger: stagger, ease: ease, delay: delay }, 0);
                 break;
             case "text-slide-out":
                 posVector = updatePosVector(direction, posVector);
-                timeline.to(elToAnimate, { positionX: posVector[0], positionY: posVector[1], opacity: opacity, duration: duration, stagger: stagger, ease: ease, delay: delay }, 0);
+                timeline.to(elToAnimate, { x: posVector[0], y: posVector[1], opacity: opacity, duration: duration, stagger: stagger, ease: ease, delay: delay }, 0);
                 break;
             // Text Flips
             case "text-flip-in":
@@ -141,18 +140,17 @@ function getElementoToAnimate(element) {
     let splitType: SplitType;
     if (element.hasAttribute("split-into")) {
         let splitInto = element.getAttribute("split-into");
-        console.log(element.getAttribute("id"));
         switch (splitInto) {
             case "lines":
-                splitType = new SplitType(element.getAttribute("id"), { types: "lines,words,chars", tagName: 'span' });
+                splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
                 elToAnimate = splitType.lines;
                 break;
             case "words":
-                splitType = new SplitType(element.getAttribute("id"), { types: "lines,words,chars", tagName: 'span' });
+                splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
                 elToAnimate = splitType.words;
                 break;
             case "letters":
-                splitType = new SplitType("#" + element.getAttribute("id"), { types: "lines,words,chars", tagName: 'span' });
+                splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
                 elToAnimate = splitType.chars;
                 break;
             case "elements":
