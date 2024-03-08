@@ -138,13 +138,14 @@ const animationConfig = {
     'text-flip-out': createAnimationFunction(['rotationX', 'rotationY', 'opacity'], 'to'),
 };
 
-function createScrollTrigger(triggerElement, start, end, scrub, timeline) {
+function createScrollTrigger(triggerElement, start, end, markers, scrub, timeline) {
 
     let tl = gsap.timeline({
         scrollTrigger: {
             trigger: triggerElement,
             start: start,
             end: end,
+            markers: markers,
             scrub: scrub !== false ? scrub : false,
             onEnter: () => { scrub !== false ? null : tl.play(); }
         }
@@ -163,6 +164,7 @@ animGroups.forEach((group, groupIndex) => {
     let groupElements = group.querySelectorAll("[am-group-el]");
     let start = group.getAttribute("start") || "top 80%";
     let end = group.getAttribute("end") || "bottom 20%";
+    let markers = group.getAttribute("markers") || false;
     let scrub;
     if (group.hasAttribute("scrub")) {
         if (group.getAttribute("scrub") === "true") { scrub = true; }
@@ -181,7 +183,7 @@ animGroups.forEach((group, groupIndex) => {
         if (animationConfig[animType]) {
             animationConfig[animType](timeline, elToAnimate, config);
         }
-        createScrollTrigger(group, start, end, scrub, timeline);
+        createScrollTrigger(group, start, end, markers, scrub, timeline);
     });
 
     // Reset the group opacity back to 1
