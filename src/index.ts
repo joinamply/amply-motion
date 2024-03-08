@@ -5,6 +5,9 @@ import SplitType from "split-type";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/* ====================
+Functions
+==================== */
 function getAttributeAsFloat(element: Element, attribute: string, defaultValue: number = 0): number {
     return parseFloat(element.getAttribute(attribute) as string) || defaultValue;
 }
@@ -150,11 +153,14 @@ function createScrollTrigger(triggerElement, start, end, scrub, timeline) {
     tl.add(timeline);
 }
 
-let animationGroups = document.querySelectorAll("[anim-group]");
+/* ====================
+Initialization
+==================== */
+let animGroups = document.querySelectorAll("[am-group]");
 
-animationGroups.forEach((group, groupIndex) => {
+animGroups.forEach((group, groupIndex) => {
     let timeline = gsap.timeline();
-    let groupElements = group.querySelectorAll("[anim-group-el]");
+    let groupElements = group.querySelectorAll("[am-group-el]");
     let start = group.getAttribute("start") || "top 80%";
     let end = group.getAttribute("end") || "bottom 20%";
     let scrub;
@@ -168,8 +174,8 @@ animationGroups.forEach((group, groupIndex) => {
         // Check if the element has an id applied and if not, apply one
         if (!el.hasAttribute("id")) { el.setAttribute("id", `group-${groupIndex}-el-${elIndex}`); }
         // Get default values from the settings element
-        let animType = el.getAttribute("anim-group-el")!;
-        let settingsEl = document.querySelector(`[anim-settings="${animType}"]`)!;
+        let animType = el.getAttribute("am-group-el")!;
+        let settingsEl = document.querySelector(`[am-settings="${animType}"]`)!;
         let config = createAnimationConfig(el, settingsEl);
         let elToAnimate = getElementoToAnimate(el);
         if (animationConfig[animType]) {
