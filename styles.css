@@ -1,5 +1,5 @@
 /* Prevent the elements from blinking before the animation starts */
-[anim-group] {
+[am-group] {
     opacity: 0;
 }
 
