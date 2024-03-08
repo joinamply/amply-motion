@@ -1,0 +1,44 @@
+<script>
+    /* ======================
+    Component Copy
+    ====================== */
+    let copingComponent = false;
+    let componentButton = $("#component-button");
+    let componentButtonText = $(componentButton).find("[component-button-text]");
+    const codeSnippet = JSON.parse($(".component-snippet").text());
+
+    $(componentButton).on("click", function () {
+        copingComponent = true;
+        document.execCommand("copy");
+        $(componentButtonText).text("Copied to clipboard");
+        revertButtonText();
+    });
+
+    document.addEventListener("copy", (event) => {
+        if (copingComponent) {
+            copingComponent = false;
+            event.clipboardData.setData("application/json", JSON.stringify(codeSnippet));
+            event.preventDefault();
+        }
+    });
+
+    function revertButtonText() {
+        setTimeout(() => {
+            $(componentButtonText).text("Copy component");
+        }, 3000);
+    }
+
+    /* ======================
+    Script Copy 
+    ====================== */
+    window.fsAttributes = window.fsAttributes || [];
+    window.fsAttributes.push([
+        'richtext',
+        (filterInstances) => {
+            let fsCopy = document.createElement("script");
+            fsCopy.setAttribute("type", "text/javascript");
+            fsCopy.setAttribute("src", "https://cdn.jsdelivr.net/npm/@finsweet/attributes-copyclip@1/copyclip.js");
+            document.getElementsByTagName("head")[0].appendChild(fsCopy);
+        },
+    ]);
+</script>

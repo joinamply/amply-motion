@@ -15,27 +15,29 @@ function getAttributeAsString(element: Element, attribute: string, defaultValue:
 
 function createAnimationConfig(el: Element, settingsEl: Element) {
     // Get defaults for values
-    let x = getAttributeAsString(settingsEl, "default-pos-x", "0rem");
-    let y = getAttributeAsString(settingsEl, "default-pos-y", "0rem");
-    let rotationX = getAttributeAsFloat(settingsEl, "default-rot-x", 90);
-    let rotationY = getAttributeAsFloat(settingsEl, "default-rot-y", 90);
-    let scale = getAttributeAsString(settingsEl, "default-scale");
+    let x = getAttributeAsString(settingsEl, "positionX", "0rem");
+    let y = getAttributeAsString(settingsEl, "positionY", "0rem");
+    let rotationX = getAttributeAsFloat(settingsEl, "rotationX", 90);
+    let rotationY = getAttributeAsFloat(settingsEl, "rotationY", 90);
+    let scale = getAttributeAsString(settingsEl, "scale");
     // Get defaults for timeline values
-    let duration = getAttributeAsFloat(settingsEl, "default-duration", 1);
-    let ease = getAttributeAsString(settingsEl, "default-ease", "expo.out");
-    let stagger = getAttributeAsFloat(settingsEl, "default-stagger", 0.1);
-    let direction = getAttributeAsString(settingsEl, "default-direction", "up");
+    let duration = getAttributeAsFloat(settingsEl, "duration", 1);
+    let ease = getAttributeAsString(settingsEl, "ease", "expo.out");
+    let staggerAmount = getAttributeAsFloat(settingsEl, "stagger-amount", duration);
+    let direction = getAttributeAsString(settingsEl, "direction", "up");
+    let positioning = getAttributeAsString(settingsEl, "positioning", "<");
     // Check if element has values and if not, use the defaults
     let delay = getAttributeAsFloat(el, 'delay');
     let opacity = getAttributeAsFloat(el, 'opacity');
     if (el.hasAttribute("duration")) { duration = getAttributeAsFloat(el, "duration"); }
     if (el.hasAttribute("ease")) { ease = getAttributeAsString(el, "ease"); }
-    if (el.hasAttribute("stagger")) { stagger = getAttributeAsFloat(el, "stagger"); }
+    if (el.hasAttribute("stagger-amount")) { staggerAmount = getAttributeAsFloat(el, "stagger-amount"); }
     if (el.hasAttribute("direction")) { direction = getAttributeAsString(el, "direction"); }
-    if (el.hasAttribute("pos-x")) { x = getAttributeAsString(el, "pos-x"); }
-    if (el.hasAttribute("pos-y")) { y = getAttributeAsString(el, "pos-y"); }
-    if (el.hasAttribute("rot-x")) { rotationX = getAttributeAsFloat(el, "rot-x"); }
-    if (el.hasAttribute("rot-y")) { rotationY = getAttributeAsFloat(el, "rot-y"); }
+    if (el.hasAttribute("positioning")) { positioning = getAttributeAsString(el, "positioning"); }
+    if (el.hasAttribute("positionX")) { x = getAttributeAsString(el, "positionX"); }
+    if (el.hasAttribute("positionY")) { y = getAttributeAsString(el, "positionY"); }
+    if (el.hasAttribute("rotationX")) { rotationX = getAttributeAsFloat(el, "rotationX"); }
+    if (el.hasAttribute("rotationY")) { rotationY = getAttributeAsFloat(el, "rotationY"); }
     if (el.hasAttribute("scale")) { scale = getAttributeAsString(el, "scale"); }
     // Update the position vector
     x = updatePosVector(direction, x, y).posX;
@@ -44,7 +46,7 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
     rotationX = updateRotVector(direction, rotationX, rotationY).rotX;
     rotationY = updateRotVector(direction, rotationX, rotationY).rotY;
 
-    return { duration, ease, stagger, direction, delay, opacity, x, y, rotationX, rotationY, scale };
+    return { duration, ease, staggerAmount: staggerAmount, direction, positioning, delay, opacity, x, y, rotationX, rotationY, scale };
 }
 
 function getElementoToAnimate(element) {
@@ -103,7 +105,9 @@ function createAnimationFunction(properties: string[], method: 'from' | 'to') {
         animationProperties.duration = config.duration;
         animationProperties.ease = config.ease;
         animationProperties.delay = config.delay;
-        animationProperties.stagger = config.stagger;
+        if (config.staggerAmount !== undefined) {
+            animationProperties.stagger = { amount: config.staggerAmount };
+        }
         timeline[method](elToAnimate, animationProperties, 0);
     };
 }
