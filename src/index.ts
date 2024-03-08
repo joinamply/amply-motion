@@ -146,7 +146,7 @@ function createScrollTrigger(triggerElement, start, end, markers, scrub, timelin
             start: start,
             end: end,
             markers: markers,
-            scrub: scrub !== false ? scrub : false,
+            scrub: scrub,
             onEnter: () => { scrub !== false ? null : tl.play(); }
         }
     });
@@ -160,11 +160,12 @@ Initialization
 let animGroups = document.querySelectorAll("[am-group]");
 
 animGroups.forEach((group, groupIndex) => {
-    let timeline = gsap.timeline();
     let groupElements = group.querySelectorAll("[am-group-el]");
-    let start = group.getAttribute("start") || "top 80%";
-    let end = group.getAttribute("end") || "bottom 20%";
-    let markers = group.getAttribute("markers") || false;
+    let settingsGroup = document.querySelector('[am-settings="group"]')!;
+    let timeline = gsap.timeline();
+    let start = group.getAttribute("trigger-start") || getAttributeAsString(settingsGroup, "trigger-start", "top 20%");
+    let end = group.getAttribute("trigger-end") || getAttributeAsString(settingsGroup, "trigger-end", "bottom 20%");
+    let markers = group.getAttribute("markers") === "true";;
     let scrub;
     if (group.hasAttribute("scrub")) {
         if (group.getAttribute("scrub") === "true") { scrub = true; }
@@ -177,8 +178,8 @@ animGroups.forEach((group, groupIndex) => {
         if (!el.hasAttribute("id")) { el.setAttribute("id", `group-${groupIndex}-el-${elIndex}`); }
         // Get default values from the settings element
         let animType = el.getAttribute("am-group-el")!;
-        let settingsEl = document.querySelector(`[am-settings="${animType}"]`)!;
-        let config = createAnimationConfig(el, settingsEl);
+        let settingsAnim = document.querySelector(`[am-settings="${animType}"]`)!;
+        let config = createAnimationConfig(el, settingsAnim);
         let elToAnimate = getElementoToAnimate(el);
         if (animationConfig[animType]) {
             animationConfig[animType](timeline, elToAnimate, config);
