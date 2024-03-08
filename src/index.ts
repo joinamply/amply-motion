@@ -27,6 +27,7 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
     let duration = getAttributeAsFloat(settingsEl, "duration", 1);
     let ease = getAttributeAsString(settingsEl, "ease", "expo.out");
     let staggerAmount = getAttributeAsFloat(settingsEl, "stagger-amount", duration);
+    let staggerFrom = getAttributeAsString(settingsEl, "stagger-from", "start");
     let direction = getAttributeAsString(settingsEl, "direction", "up");
     let positioning = getAttributeAsString(settingsEl, "positioning", "<");
     // Check if element has values and if not, use the defaults
@@ -35,6 +36,7 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
     if (el.hasAttribute("duration")) { duration = getAttributeAsFloat(el, "duration"); }
     if (el.hasAttribute("ease")) { ease = getAttributeAsString(el, "ease"); }
     if (el.hasAttribute("stagger-amount")) { staggerAmount = getAttributeAsFloat(el, "stagger-amount"); }
+    if (el.hasAttribute("stagger-from")) { staggerFrom = getAttributeAsString(el, "stagger-from"); }
     if (el.hasAttribute("direction")) { direction = getAttributeAsString(el, "direction"); }
     if (el.hasAttribute("positioning")) { positioning = getAttributeAsString(el, "positioning"); }
     if (el.hasAttribute("positionX")) { x = getAttributeAsString(el, "positionX"); }
@@ -49,7 +51,7 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
     rotationX = updateRotVector(direction, rotationX, rotationY).rotX;
     rotationY = updateRotVector(direction, rotationX, rotationY).rotY;
 
-    return { duration, ease, staggerAmount: staggerAmount, direction, positioning, delay, opacity, x, y, rotationX, rotationY, scale };
+    return { duration, ease, staggerAmount: staggerAmount, staggerFrom, direction, positioning, delay, opacity, x, y, rotationX, rotationY, scale };
 }
 
 function getElementoToAnimate(element) {
@@ -109,7 +111,7 @@ function createAnimationFunction(properties: string[], method: 'from' | 'to') {
         animationProperties.ease = config.ease;
         animationProperties.delay = config.delay;
         if (config.staggerAmount !== undefined) {
-            animationProperties.stagger = { amount: config.staggerAmount };
+            animationProperties.stagger = { amount: config.staggerAmount, from: config.staggerFrom};
         }
         timeline[method](elToAnimate, animationProperties, 0);
     };
