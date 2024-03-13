@@ -3,6 +3,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 // import { TextPlugin } from "gsap/TextPlugin";
 import SplitType from "split-type";
 
+(window as any).gsap = gsap;
+(window as any).ScrollTrigger = ScrollTrigger;
+(window as any).SplitType = SplitType; 
+
 gsap.registerPlugin(ScrollTrigger);
 
 /* ====================
