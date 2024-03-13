@@ -5,7 +5,7 @@ import SplitType from "split-type";
 
 (window as any).gsap = gsap;
 (window as any).ScrollTrigger = ScrollTrigger;
-(window as any).SplitType = SplitType; 
+(window as any).SplitType = SplitType;
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -115,7 +115,7 @@ function createAnimationFunction(properties: string[], method: 'from' | 'to') {
         animationProperties.ease = config.ease;
         animationProperties.delay = config.delay;
         if (config.staggerAmount !== undefined) {
-            animationProperties.stagger = { amount: config.staggerAmount, from: config.staggerFrom};
+            animationProperties.stagger = { amount: config.staggerAmount, from: config.staggerFrom };
         }
         timeline[method](elToAnimate, animationProperties, 0);
     };
@@ -196,6 +196,7 @@ animGroups.forEach((group, groupIndex) => {
     // Reset the group opacity back to 1
     const groupElement = group as HTMLElement;
     groupElement.style.opacity = "1";
-    // Refresh all ScrollTrigger instances
-    ScrollTrigger.refresh();
 });
+
+// Refresh all ScrollTrigger instances
+ScrollTrigger.refresh();
