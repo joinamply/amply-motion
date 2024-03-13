@@ -198,5 +198,15 @@ animGroups.forEach((group, groupIndex) => {
     groupElement.style.opacity = "1";
 });
 
-// Refresh all ScrollTrigger instances
-ScrollTrigger.refresh();
+// Refresh ScrollTrigger on page height change
+let lastPageHeight = document.documentElement.scrollHeight;
+const checkPageHeight = () => {
+    const currentPageHeight = document.documentElement.scrollHeight;
+    if (lastPageHeight !== currentPageHeight) {
+        ScrollTrigger.refresh();
+    }
+    lastPageHeight = currentPageHeight;
+};
+const intervalId = setInterval(checkPageHeight, 1000); // check every second
+// Stop checking
+// clearInterval(intervalId);
