@@ -196,4 +196,6 @@ animGroups.forEach((group, groupIndex) => {
     // Reset the group opacity back to 1
     const groupElement = group as HTMLElement;
     groupElement.style.opacity = "1";
+    // Refresh all ScrollTrigger instances
+    ScrollTrigger.refresh();
 });
