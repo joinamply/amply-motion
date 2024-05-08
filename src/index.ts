@@ -1,13 +1,14 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import { TextPlugin } from "gsap/TextPlugin";
+import { TextPlugin } from "gsap/TextPlugin";
+import { RoughEase } from "gsap/EasePack";
 import SplitType from "split-type";
 
 (window as any).gsap = gsap;
 (window as any).ScrollTrigger = ScrollTrigger;
 (window as any).SplitType = SplitType;
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, TextPlugin, RoughEase);
 
 /* ====================
 Functions
@@ -34,6 +35,8 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
     let staggerFrom = getAttributeAsString(settingsEl, "stagger-from", "start");
     let direction = getAttributeAsString(settingsEl, "direction", "up");
     let positioning = getAttributeAsString(settingsEl, "positioning", "<");
+    let repeat = getAttributeAsFloat(settingsEl, "repeat", 0);
+    let repeatDelay = getAttributeAsFloat(settingsEl, "repeat-delay", 0);
     // Check if element has values and if not, use the defaults
     let delay = getAttributeAsFloat(el, 'delay');
     let opacity = getAttributeAsFloat(el, 'opacity');
@@ -48,14 +51,16 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
     if (el.hasAttribute("rotationX")) { rotationX = getAttributeAsFloat(el, "rotationX"); }
     if (el.hasAttribute("rotationY")) { rotationY = getAttributeAsFloat(el, "rotationY"); }
     if (el.hasAttribute("scale")) { scale = getAttributeAsString(el, "scale"); }
+    if (el.hasAttribute("repeat")) { repeat = getAttributeAsFloat(el, "repeat"); }
+    if (el.hasAttribute("repeat-delay")) { repeatDelay = getAttributeAsFloat(el, "repeat-delay"); }
     // Update the position vector
     x = updatePosVector(direction, x, y).posX;
     y = updatePosVector(direction, x, y).posY;
     // Update the rotation vector
     rotationX = updateRotVector(direction, rotationX, rotationY).rotX;
     rotationY = updateRotVector(direction, rotationX, rotationY).rotY;
-
-    return { duration, ease, staggerAmount: staggerAmount, staggerFrom, direction, positioning, delay, opacity, x, y, rotationX, rotationY, scale };
+    // Return the configuration object
+    return { duration, ease, staggerAmount: staggerAmount, staggerFrom, direction, positioning, delay, opacity, x, y, rotationX, rotationY, scale, repeat, repeatDelay };
 }
 
 function getElementoToAnimate(element) {
@@ -187,9 +192,33 @@ animGroups.forEach((group, groupIndex) => {
         let settingsAnim = document.querySelector(`[am-settings="${animType}"]`)!;
         let config = createAnimationConfig(el, settingsAnim);
         let elToAnimate = getElementoToAnimate(el);
-        if (animationConfig[animType]) {
-            animationConfig[animType](timeline, elToAnimate, config);
+        // Check if the animation type is typewriter
+        switch (animType) {
+            case "typewriter":
+                let words = el.getAttribute("words");
+                if (words === null) { 
+                    console.log("Typewriter animation requires a 'words' attribute");
+                    return;
+                }
+                // Split words into an array
+                const splitWords = words.split(",");
+                splitWords.forEach(word => {
+                    let tl = gsap.timeline({  duration: config.duration, repeat: config.repeat, repeatDelay: 2, yoyo: true});
+                    tl.fromTo(el, { text: "" }, { text: word }, config.duration + 2);
+                    timeline.add(tl);
+                });
+                break;
+            default:
+                if (animationConfig[animType]) {
+                    animationConfig[animType](timeline, elToAnimate, config);
+                }
+                else {
+                    console.log(`Animation type ${animType} is not supported`);
+                }
+                break;
         }
+
+        // Create the scroll trigger
         createScrollTrigger(group, start, end, markers, scrub, timeline);
     });
 
