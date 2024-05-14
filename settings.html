@@ -2,29 +2,37 @@
 To check all ease options available visit:
 https://gsap.com/docs/v3/Eases/
 
-Group:
-scroll, hover (reverse the anim on out), click.
+===== Group - Options =====
+scroll, hover-in, hover-in-out(reverse the anim on out), click.
 
-Ins and Outs:
-the variables from Ins is the value that the element will come from, and the Outs is the value that the element will go to.
+===== Group - ScrollTrigger Options =====
+When the animation should start and end. The default is top 80% bottom 20%. You can use any of the following keywords for each trigger: top, bottom, left, right, center, or a number in pixels or percentage.
+
+===== Group - Toggle Actions =====
+Determines how the linked animation is controlled at the 4 distinct toggle places - onEnter, onLeave, onEnterBack, and onLeaveBack. The default is play none none none. So toggleActions: "play pause resume reset" will play the animation when entering, pause it when leaving, resume it when entering again backwards, and reset (rewind back to the beginning) when scrolling all the way back past the beginning. You can use any of the following keywords for each action: "play", "pause", "resume", "reset", "restart", "complete", "reverse", and "none".
+
+===== Ins and Outs =====
+The variables from Ins is the value that the element will come from, and the Outs is the value that the element will go to.
 For example, opacity of 0 for Ins means that the element will start with opacity 0 and go to the value set inside webflow, and the opposite for Outs.
 
-Position and Rotation:
+===== Position and Rotation =====
 Don't set those as negative vales, the code will handle that for you.
 
-Directions:
+===== Directions =====
 up, down, left, right.
 
-Split Into:
+===== Split Into =====
 lines, words, letters, elements (works on elements with children).
 
-Timeline Position:
+===== Timeline Position =====
 https://gsap.com/docs/v3/GSAP/gsap.timeline()/#positioning-animations-in-a-timeline
 
 By default all timelines start at the same time, if you want to start at a different time you can set the position in the timeline.
--->
+
+===== Custom =====
+You can use any of the available options. -->
 <!-- Group -->
-<meta am-settings="group" trigger-start="top 80%" trigger-end="bottom 20%" markers="false" scrub="false">
+<meta am-settings="group" trigger-start="top 80%" trigger-end="bottom 20%" markers="false" scrub="false" toggle-actions="play none none none">
 <!-- Display -->
 <meta am-settings="display-block" duration="0" ease="none" timeline-position="<">
 <meta am-settings="display-flex" duration="0" ease="none" timeline-position="<">
@@ -59,6 +67,8 @@ By default all timelines start at the same time, if you want to start at a diffe
 <!-- Text Flip -->
 <meta am-settings="text-flip-in" duration="1" ease="expo.out" rotation-x="90" rotation-y="90" direction="up" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
 <meta am-settings="text-flip-out" duration="1" ease="expo.out" rotation-x="90" rotation-y="90" direction="up" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<!-- Custom -->
+<meta am-settings="custom" duration="1" ease="expo.out" scale="1" position-x="0" position-y="0" position-z="0" rotation-x="0" rotation-y="0" rotation-z="0" opacity="1" timeline-position="<">
 <!-- Count To -->
 <meta am-settings="counter" count-to="0" duration="2" count-steps="1" ease="power1" timeline-position="<">
 <!-- Typewriter -->

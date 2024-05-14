@@ -43,8 +43,10 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
         "opacity": { defaultValue: 1, type: 'float' },
         "position-x": { defaultValue: '0rem', type: 'string' },
         "position-y": { defaultValue: '0rem', type: 'string' },
-        "rotation-x": { defaultValue: 90, type: 'float' },
-        "rotation-y": { defaultValue: 90, type: 'float' },
+        "position-z": { defaultValue: '0rem', type: 'float' },
+        "rotation-x": { defaultValue: 0, type: 'float' },
+        "rotation-y": { defaultValue: 0, type: 'float' },
+        "rotation-z": { defaultValue: 0, type: 'float' },
         "scale": { defaultValue: null, type: 'string' },
         "yoyo": { defaultValue: false, type: 'boolean' },
         "repeat": { defaultValue: 0, type: 'float' },
@@ -206,8 +208,8 @@ animGroups.forEach((group, groupIndex) => {
         default:
             let start = group.getAttribute("trigger-start") || getAttributeAsString(settingsGroup, "trigger-start", "top 20%");
             let end = group.getAttribute("trigger-end") || getAttributeAsString(settingsGroup, "trigger-end", "bottom 20%");
-            let markers = group.getAttribute("markers") ? group.getAttribute("markers") === "true" :
-                getAttributeAsBoolean(settingsGroup, "markers", false);
+            let markers = group.getAttribute("markers") ? group.getAttribute("markers") === "true" : getAttributeAsBoolean(settingsGroup, "markers", false);
+            let toggleActions = group.getAttribute("toggle-actions") || getAttributeAsString(settingsGroup, "toggle-actions", "play none none reset");
             let scrub;
             if (group.hasAttribute("scrub")) {
                 if (group.getAttribute("scrub") === "true") { scrub = true; }
@@ -220,7 +222,7 @@ animGroups.forEach((group, groupIndex) => {
                     end: end,
                     markers: markers,
                     scrub: scrub,
-                    onEnter: () => { scrub !== false ? null : tl.play(); }
+                    toggleActions: scrub !== false ? toggleActions : "play none none reverse"
                 }
             });
             tl.add(groupTimeline);

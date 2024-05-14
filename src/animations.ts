@@ -91,6 +91,9 @@ export function setElementTimeline(element, animType: string, animConfig: any = 
             case "text-flip-out":
                 createAnimationFunction(["rotation-x", "rotation-y", "opacity"], "to")(tl, element, animConfig);
                 break;
+            case "custom":
+                let customFunction = createAnimationFunction(["position-x", "position-y", "position-z", "rotation-x", "rotation-y", "rotation-z", "scale", "opacity"], "to")(tl, element, animConfig);
+                break;
             case "counter":
                 createAnimationFunction(["count-to", "count-steps"], "counter")(tl, element, animConfig);
                 break;
@@ -128,11 +131,17 @@ function createAnimationFunction(properties: string[], method: 'from' | 'to' | '
                     case "position-y":
                         animationProperties.y = config[property];
                         break;
+                    case "position-z":
+                        animationProperties.z = config[property];
+                        break;
                     case "rotation-x":
                         animationProperties.rotationX = config[property];
                         break;
                     case "rotation-y":
                         animationProperties.rotationY = config[property];
+                        break;
+                    case "rotation-z":
+                        animationProperties.rotationZ = config[property];
                         break;
                     case "count-to":
                         animationProperties.end = config[property];
