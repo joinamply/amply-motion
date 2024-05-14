@@ -2,7 +2,6 @@ import SplitType from "split-type";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
-import { RoughEase } from "gsap/EasePack";
 
 import { setElementTimeline } from './animations';
 
@@ -13,7 +12,7 @@ Initialization
 (window as any).ScrollTrigger = ScrollTrigger;
 (window as any).SplitType = SplitType;
 // Register GSAP
-gsap.registerPlugin(ScrollTrigger, TextPlugin, RoughEase);
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
 /* ====================
 Functions
