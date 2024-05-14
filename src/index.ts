@@ -1,13 +1,18 @@
+import SplitType from "split-type";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
 import { RoughEase } from "gsap/EasePack";
-import SplitType from "split-type";
 
+import { setElementTimeline } from './animations';
+
+/* ====================
+Initialization
+==================== */
 (window as any).gsap = gsap;
 (window as any).ScrollTrigger = ScrollTrigger;
 (window as any).SplitType = SplitType;
-
+// Register GSAP
 gsap.registerPlugin(ScrollTrigger, TextPlugin, RoughEase);
 
 /* ====================
@@ -21,213 +26,214 @@ function getAttributeAsString(element: Element, attribute: string, defaultValue:
     return element.getAttribute(attribute) as string || defaultValue;
 }
 
+function getAttributeAsBoolean(element: Element, attribute: string, defaultValue: boolean = false): boolean {
+    return element.hasAttribute(attribute) || defaultValue;
+}
+
+/* ====================
+Animation Settings
+==================== */
 function createAnimationConfig(el: Element, settingsEl: Element) {
-    // Get defaults for values
-    let x = getAttributeAsString(settingsEl, "positionX", "0rem");
-    let y = getAttributeAsString(settingsEl, "positionY", "0rem");
-    let rotationX = getAttributeAsFloat(settingsEl, "rotationX", 90);
-    let rotationY = getAttributeAsFloat(settingsEl, "rotationY", 90);
-    let scale = getAttributeAsString(settingsEl, "scale");
-    // Get defaults for timeline values
-    let duration = getAttributeAsFloat(settingsEl, "duration", 1);
-    let ease = getAttributeAsString(settingsEl, "ease", "expo.out");
-    let staggerAmount = getAttributeAsFloat(settingsEl, "stagger-amount", duration);
-    let staggerFrom = getAttributeAsString(settingsEl, "stagger-from", "start");
-    let direction = getAttributeAsString(settingsEl, "direction", "up");
-    let positioning = getAttributeAsString(settingsEl, "positioning", "<");
-    let repeat = getAttributeAsFloat(settingsEl, "repeat", 0);
-    let repeatDelay = getAttributeAsFloat(settingsEl, "repeat-delay", 0);
-    // Check if element has values and if not, use the defaults
-    let delay = getAttributeAsFloat(el, 'delay');
-    let opacity = getAttributeAsFloat(el, 'opacity');
-    if (el.hasAttribute("duration")) { duration = getAttributeAsFloat(el, "duration"); }
-    if (el.hasAttribute("ease")) { ease = getAttributeAsString(el, "ease"); }
-    if (el.hasAttribute("stagger-amount")) { staggerAmount = getAttributeAsFloat(el, "stagger-amount"); }
-    if (el.hasAttribute("stagger-from")) { staggerFrom = getAttributeAsString(el, "stagger-from"); }
-    if (el.hasAttribute("direction")) { direction = getAttributeAsString(el, "direction"); }
-    if (el.hasAttribute("positioning")) { positioning = getAttributeAsString(el, "positioning"); }
-    if (el.hasAttribute("positionX")) { x = getAttributeAsString(el, "positionX"); }
-    if (el.hasAttribute("positionY")) { y = getAttributeAsString(el, "positionY"); }
-    if (el.hasAttribute("rotationX")) { rotationX = getAttributeAsFloat(el, "rotationX"); }
-    if (el.hasAttribute("rotationY")) { rotationY = getAttributeAsFloat(el, "rotationY"); }
-    if (el.hasAttribute("scale")) { scale = getAttributeAsString(el, "scale"); }
-    if (el.hasAttribute("repeat")) { repeat = getAttributeAsFloat(el, "repeat"); }
-    if (el.hasAttribute("repeat-delay")) { repeatDelay = getAttributeAsFloat(el, "repeat-delay"); }
-    // Update the position vector
-    x = updatePosVector(direction, x, y).posX;
-    y = updatePosVector(direction, x, y).posY;
-    // Update the rotation vector
-    rotationX = updateRotVector(direction, rotationX, rotationY).rotX;
-    rotationY = updateRotVector(direction, rotationX, rotationY).rotY;
-    // Return the configuration object
-    return { duration, ease, staggerAmount: staggerAmount, staggerFrom, direction, positioning, delay, opacity, x, y, rotationX, rotationY, scale, repeat, repeatDelay };
+    const attributes = {
+        "duration": { defaultValue: 1, type: 'float' },
+        "delay": { defaultValue: 0, type: 'float' },
+        "ease": { defaultValue: 'expo.out', type: 'string' },
+        "stagger-amount": { defaultValue: 0, type: 'float' },
+        "stagger-from": { defaultValue: 'start', type: 'string' },
+        "direction": { defaultValue: 'up', type: 'string' },
+        "opacity": { defaultValue: 1, type: 'float' },
+        "position-x": { defaultValue: '0rem', type: 'string' },
+        "position-y": { defaultValue: '0rem', type: 'string' },
+        "rotation-x": { defaultValue: 90, type: 'float' },
+        "rotation-y": { defaultValue: 90, type: 'float' },
+        "scale": { defaultValue: null, type: 'string' },
+        "yoyo": { defaultValue: false, type: 'boolean' },
+        "repeat": { defaultValue: 0, type: 'float' },
+        "repeat-delay": { defaultValue: 0, type: 'float' },
+        "split-into": { defaultValue: '', type: 'string' },
+        "timeline-position": { defaultValue: '<', type: 'string' },
+        "count-to": { defaultValue: 0, type: 'float' },
+        "count-steps": { defaultValue: 1, type: 'float' },
+        "words": { defaultValue: '', type: 'string' },
+    };
+    // Create the config object
+    interface Config { [key: string]: any; }
+    let config: Config = {};
+
+    for (let attr in attributes) {
+        let value;
+        switch (attributes[attr].type) {
+            case 'float':
+                value = el.hasAttribute(attr) ? getAttributeAsFloat(el, attr) :
+                    settingsEl.hasAttribute(attr) ? getAttributeAsFloat(settingsEl, attr) :
+                        attributes[attr].defaultValue;
+                break;
+            case 'string':
+                value = el.hasAttribute(attr) ? getAttributeAsString(el, attr) :
+                    settingsEl.hasAttribute(attr) ? getAttributeAsString(settingsEl, attr) :
+                        attributes[attr].defaultValue;
+                break;
+            case 'boolean':
+                value = el.hasAttribute(attr) ? getAttributeAsBoolean(el, attr) :
+                    settingsEl.hasAttribute(attr) ? getAttributeAsBoolean(settingsEl, attr) :
+                        attributes[attr].defaultValue;
+                break;
+        }
+        config[attr] = value;
+    }
+    // Use the animType to update the position and rotation vectors
+    let animType = el.getAttribute("am-group-el")!;
+    config["position-x"] = updatePosVector(animType, config["direction"], config["position-x"], config["position-y"]).posX;
+    config["position-y"] = updatePosVector(animType, config["direction"], config["position-x"], config["position-y"]).posY;
+    config["rotation-x"] = updateRotVector(animType, config["direction"], config["rotation-x"], config["rotation-y"]).rotX;
+    config["rotation-y"] = updateRotVector(animType, config["direction"], config["rotation-x"], config["rotation-y"]).rotY;
+    // If the element doesn't has the split into attr, add it if the default value
+    if (!el.hasAttribute("split-into")) {
+        el.setAttribute("split-into", config["split-into"]);
+    }
+
+    return config;
+}
+
+function updatePosVector(animType, direction, x, y) {
+    if (direction === "up" || direction === "down") { x = "0rem"; }
+    if (direction === "left" || direction === "right") { y = "0rem"; }
+    if (animType.includes("-in")) {
+        if (direction === "right") { x = "-" + x; }
+        if (direction === "down") { y = "-" + y; }
+    }
+    else {
+        if (direction === "left") { x = "-" + x; }
+        if (direction === "up") { y = "-" + y; }
+    }
+
+    return { posX: x, posY: y };
+}
+
+function updateRotVector(animType, direction, rotationX, rotationY) {
+    if (direction === "left" || direction === "right") { rotationX = 0; }
+    if (direction === "up" || direction === "down") { rotationY = 0; }
+    if (animType.includes("-in")) {
+        if (direction === "up") { rotationX = rotationX * -1; }
+        if (direction === "right") { rotationY = rotationY * -1; }
+    }
+    else {
+        if (direction === "down") { rotationX = rotationX * -1; }
+        if (direction === "left") { rotationY = rotationY * -1; }
+    }
+    return { rotX: rotationX, rotY: rotationY };
 }
 
 function getElementoToAnimate(element) {
     let elToAnimate;
     let splitType: SplitType;
-    if (element.hasAttribute("split-into")) {
-        let splitInto = element.getAttribute("split-into");
-        switch (splitInto) {
-            case "lines":
-                splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
-                elToAnimate = splitType.lines;
-                break;
-            case "words":
-                splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
-                elToAnimate = splitType.words;
-                break;
-            case "letters":
-                splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
-                elToAnimate = splitType.chars;
-                break;
-            case "elements":
-                elToAnimate = Array.from(element.children);
-                break;
-        }
-        return elToAnimate;
+    let splitInto = element.getAttribute("split-into");
+    switch (splitInto) {
+        case "lines":
+            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
+            elToAnimate = splitType.lines;
+            break;
+        case "words":
+            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
+            elToAnimate = splitType.words;
+            break;
+        case "letters":
+            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
+            elToAnimate = splitType.chars;
+            break;
+        case "elements":
+            elToAnimate = Array.from(element.children);
+            break;
+        default:
+            elToAnimate = element;
+            break;
     }
-    else {
-        return element;
-    }
-}
-
-function updatePosVector(direction, x, y) {
-    if (direction === "up" || direction === "down") { x = "0rem"; }
-    if (direction === "left" || direction === "right") { y = "0rem"; }
-    if (direction === "right") { x = "-" + x; }
-    if (direction === "down") { y = "-" + y; }
-    return { posX: x, posY: y };
-}
-
-function updateRotVector(direction, rotationX, rotationY) {
-    if (direction === "left" || direction === "right") { rotationX = 0; }
-    if (direction === "up" || direction === "down") { rotationY = 0; }
-    if (direction === "down") { rotationX = rotationX * -1; }
-    if (direction === "left") { rotationY = rotationY * -1; }
-    return { rotX: rotationX, rotY: rotationY };
-}
-
-function createAnimationFunction(properties: string[], method: 'from' | 'to') {
-    return (timeline: gsap.core.Timeline, elToAnimate: Element, config: any) => {
-        const animationProperties: any = {};
-        properties.forEach(property => {
-            if (config[property] !== undefined) {
-                animationProperties[property] = config[property];
-            }
-        });
-        animationProperties.duration = config.duration;
-        animationProperties.ease = config.ease;
-        animationProperties.delay = config.delay;
-        if (config.staggerAmount !== undefined) {
-            animationProperties.stagger = { amount: config.staggerAmount, from: config.staggerFrom };
-        }
-        timeline[method](elToAnimate, animationProperties, 0);
-    };
-}
-
-const animationConfig = {
-    'fade-in': createAnimationFunction(['opacity'], 'from'),
-    'fade-out': createAnimationFunction(['opacity'], 'to'),
-    'grow-in': createAnimationFunction(['scale', 'opacity'], 'from'),
-    'grow-out': createAnimationFunction(['scale', 'opacity'], 'to'),
-    'shrink-in': createAnimationFunction(['scale', 'opacity'], 'from'),
-    'shrink-out': createAnimationFunction(['scale', 'opacity'], 'to'),
-    'slide-in': createAnimationFunction(['x', 'y', 'opacity'], 'from'),
-    'slide-out': createAnimationFunction(['x', 'y', 'opacity'], 'to'),
-    'flip-in': createAnimationFunction(['rotationX', 'rotationY', 'opacity'], 'from'),
-    'flip-out': createAnimationFunction(['rotationX', 'rotationY', 'opacity'], 'to'),
-    'text-fade-in': createAnimationFunction(['opacity'], 'from'),
-    'text-fade-out': createAnimationFunction(['opacity'], 'to'),
-    'text-grow-in': createAnimationFunction(['scale', 'opacity'], 'from'),
-    'text-grow-out': createAnimationFunction(['scale', 'opacity'], 'to'),
-    'text-shrink-in': createAnimationFunction(['scale', 'opacity'], 'from'),
-    'text-shrink-out': createAnimationFunction(['scale', 'opacity'], 'to'),
-    'text-slide-in': createAnimationFunction(['x', 'y', 'opacity'], 'from'),
-    'text-slide-out': createAnimationFunction(['x', 'y', 'opacity'], 'to'),
-    'text-flip-in': createAnimationFunction(['rotationX', 'rotationY', 'opacity'], 'from'),
-    'text-flip-out': createAnimationFunction(['rotationX', 'rotationY', 'opacity'], 'to'),
-};
-
-function createScrollTrigger(triggerElement, start, end, markers, scrub, timeline) {
-
-    let tl = gsap.timeline({
-        scrollTrigger: {
-            trigger: triggerElement,
-            start: start,
-            end: end,
-            markers: markers,
-            scrub: scrub,
-            onEnter: () => { scrub !== false ? null : tl.play(); }
-        }
-    });
-
-    tl.add(timeline);
+    return elToAnimate;
 }
 
 /* ====================
-Initialization
+Groups
 ==================== */
 let animGroups = document.querySelectorAll("[am-group]");
-
 animGroups.forEach((group, groupIndex) => {
-    let groupElements = group.querySelectorAll("[am-group-el]");
+    let groupType = group.getAttribute("am-group") || "scroll";
     let settingsGroup = document.querySelector('[am-settings="group"]')!;
-    let timeline = gsap.timeline();
-    let start = group.getAttribute("trigger-start") || getAttributeAsString(settingsGroup, "trigger-start", "top 20%");
-    let end = group.getAttribute("trigger-end") || getAttributeAsString(settingsGroup, "trigger-end", "bottom 20%");
-    let markers = group.getAttribute("markers") === "true";;
-    let scrub;
-    if (group.hasAttribute("scrub")) {
-        if (group.getAttribute("scrub") === "true") { scrub = true; }
-        else {
-            scrub = parseFloat(group.getAttribute("scrub") as string);
-        }
-    }
+    let groupElements: Element[] = Array.from(group.querySelectorAll("[am-group-el]"));
+    // Timeline properties
+    let repeat = group.getAttribute("repeat") ? parseFloat(group.getAttribute("repeat") as string) :
+        getAttributeAsFloat(settingsGroup, "repeat", 0);
+    let repeatDelay = group.getAttribute("repeat-delay") ? parseFloat(group.getAttribute("repeat-delay") as string) :
+        getAttributeAsFloat(settingsGroup, "repeat-delay", 0);
+    let yoyo = group.getAttribute("yoyo") ? group.getAttribute("yoyo") === "true" :
+        getAttributeAsBoolean(settingsGroup, "yoyo", false);
+    // Create the timeline
+    let groupTimeline = gsap.timeline({ repeat: repeat, repeatDelay: repeatDelay, yoyo: yoyo });
+    // Sort the elements by their am-group-el-order attribute
+    groupElements = Array.from(groupElements).sort((a, b) => {
+        let aOrder = parseFloat(a.getAttribute("group-el-order") || "0");
+        let bOrder = parseFloat(b.getAttribute("group-el-order") || "0");
+        return aOrder - bOrder;
+    });
+    // Loop through the elements and create the animations
     groupElements.forEach((el, elIndex) => {
+        let elTimeline = gsap.timeline();
         // Check if the element has an id applied and if not, apply one
         if (!el.hasAttribute("id")) { el.setAttribute("id", `group-${groupIndex}-el-${elIndex}`); }
         // Get default values from the settings element
         let animType = el.getAttribute("am-group-el")!;
-        let settingsAnim = document.querySelector(`[am-settings="${animType}"]`)!;
-        let config = createAnimationConfig(el, settingsAnim);
+        let animSettings = document.querySelector(`[am-settings="${animType}"]`)!;
+        let animConfig = createAnimationConfig(el, animSettings);
         let elToAnimate = getElementoToAnimate(el);
-        // Check if the animation type is typewriter
-        switch (animType) {
-            case "typewriter":
-                let words = el.getAttribute("words");
-                if (words === null) { 
-                    console.log("Typewriter animation requires a 'words' attribute");
-                    return;
-                }
-                // Split words into an array
-                const splitWords = words.split(",");
-                splitWords.forEach(word => {
-                    let tl = gsap.timeline({  duration: config.duration, repeat: config.repeat, repeatDelay: 2, yoyo: true});
-                    tl.fromTo(el, { text: "" }, { text: word }, config.duration + 2);
-                    timeline.add(tl);
-                });
-                break;
-            default:
-                if (animationConfig[animType]) {
-                    animationConfig[animType](timeline, elToAnimate, config);
-                }
-                else {
-                    console.log(`Animation type ${animType} is not supported`);
-                }
-                break;
-        }
-
-        // Create the scroll trigger
-        createScrollTrigger(group, start, end, markers, scrub, timeline);
+        // Create the timeline
+        elTimeline = setElementTimeline(elToAnimate, animType, animConfig);
+        // Add the timeline to the group timeline
+        groupTimeline.add(elTimeline, animConfig["timeline-position"]);
     });
 
+    switch (groupType) {
+        case "hover-in":
+            groupTimeline.pause();
+            group.addEventListener("mouseenter", () => { groupTimeline.play(); });
+            break;
+        case "hover-in-out":
+            groupTimeline.pause();
+            group.addEventListener("mouseenter", () => { groupTimeline.play(); });
+            group.addEventListener("mouseleave", () => { groupTimeline.reverse(); });
+            break;
+        case "click":
+            groupTimeline.pause();
+            group.addEventListener("click", () => { groupTimeline.play(); });
+            break;
+        default:
+            let start = group.getAttribute("trigger-start") || getAttributeAsString(settingsGroup, "trigger-start", "top 20%");
+            let end = group.getAttribute("trigger-end") || getAttributeAsString(settingsGroup, "trigger-end", "bottom 20%");
+            let markers = group.getAttribute("markers") ? group.getAttribute("markers") === "true" :
+                getAttributeAsBoolean(settingsGroup, "markers", false);
+            let scrub;
+            if (group.hasAttribute("scrub")) {
+                if (group.getAttribute("scrub") === "true") { scrub = true; }
+                else { scrub = parseFloat(group.getAttribute("scrub") as string); }
+            }
+            let tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: group,
+                    start: start,
+                    end: end,
+                    markers: markers,
+                    scrub: scrub,
+                    onEnter: () => { scrub !== false ? null : tl.play(); }
+                }
+            });
+            tl.add(groupTimeline);
+            break;
+    }
     // Reset the group opacity back to 1
-    const groupElement = group as HTMLElement;
-    groupElement.style.opacity = "1";
+    gsap.set(group, { opacity: 1 });
 });
 
-// Refresh ScrollTrigger on page height change
+/* ====================
+Refresh ScrollTrigger when page height change
+==================== */
 let lastPageHeight = document.documentElement.scrollHeight;
 const checkPageHeight = () => {
     const currentPageHeight = document.documentElement.scrollHeight;

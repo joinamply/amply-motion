@@ -3,8 +3,8 @@
     opacity: 0;
 }
 
-.char,
-.word,
-.line {
-    perspective: 2000px !important;
+span .char,
+span .word,
+span .line {
+    display: inline-block !important;
 }
