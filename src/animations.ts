@@ -101,7 +101,7 @@ export function setElementTimeline(element, animType: string, animConfig: any = 
                 createAnimationFunction(["position-x", "position-y", "position-z", "rotation-x", "rotation-y", "rotation-z", "scale", "opacity"], "from")(tl, element, animConfig);
                 break;
             case "any-to":
-                createAnimationFunction(["position-x", "position-y", "position-z", "rotation-x", "rotation-y", "rotation-z", "scale", "opacity"], "from")(tl, element, animConfig);
+                createAnimationFunction(["position-x", "position-y", "position-z", "rotation-x", "rotation-y", "rotation-z", "scale", "opacity"], "to")(tl, element, animConfig);
                 break;
             case "counter":
                 createAnimationFunction(["count-to", "count-steps"], "counter")(tl, element, animConfig);
