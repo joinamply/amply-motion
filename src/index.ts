@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
 
 import { setElementTimeline } from './animations';
+import { checkAnimType } from './animations';
 
 /* ====================
 Initialization
@@ -36,7 +37,7 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
     const attributes = {
         "duration": { defaultValue: 1, type: 'float' },
         "delay": { defaultValue: 0, type: 'float' },
-        "ease": { defaultValue: 'expo.out', type: 'string' },
+        "ease": { defaultValue: 'none', type: 'string' },
         "stagger-amount": { defaultValue: 0, type: 'float' },
         "stagger-from": { defaultValue: 'start', type: 'string' },
         "direction": { defaultValue: 'up', type: 'string' },
@@ -47,7 +48,7 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
         "rotation-x": { defaultValue: 0, type: 'float' },
         "rotation-y": { defaultValue: 0, type: 'float' },
         "rotation-z": { defaultValue: 0, type: 'float' },
-        "scale": { defaultValue: null, type: 'string' },
+        "scale": { defaultValue: 1, type: 'float' },
         "yoyo": { defaultValue: false, type: 'boolean' },
         "repeat": { defaultValue: 0, type: 'float' },
         "repeat-delay": { defaultValue: 0, type: 'float' },
@@ -99,7 +100,7 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
 function updatePosVector(animType, direction, x, y) {
     if (direction === "up" || direction === "down") { x = "0rem"; }
     if (direction === "left" || direction === "right") { y = "0rem"; }
-    if (animType.includes("-in")) {
+    if (animType.includes("-from")) {
         if (direction === "right") { x = "-" + x; }
         if (direction === "down") { y = "-" + y; }
     }
@@ -114,7 +115,7 @@ function updatePosVector(animType, direction, x, y) {
 function updateRotVector(animType, direction, rotationX, rotationY) {
     if (direction === "left" || direction === "right") { rotationX = 0; }
     if (direction === "up" || direction === "down") { rotationY = 0; }
-    if (animType.includes("-in")) {
+    if (animType.includes("-from")) {
         if (direction === "up") { rotationX = rotationX * -1; }
         if (direction === "right") { rotationY = rotationY * -1; }
     }
@@ -182,6 +183,10 @@ animGroups.forEach((group, groupIndex) => {
         if (!el.hasAttribute("id")) { el.setAttribute("id", `group-${groupIndex}-el-${elIndex}`); }
         // Get default values from the settings element
         let animType = el.getAttribute("am-group-el")!;
+        if (checkAnimType(animType) === false) {
+            console.log(`Invalid animation type: ${animType}`);
+            return;
+        }
         let animSettings = document.querySelector(`[am-settings="${animType}"]`)!;
         let animConfig = createAnimationConfig(el, animSettings);
         let elToAnimate = getElementoToAnimate(el);

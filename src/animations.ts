@@ -3,6 +3,12 @@ import { registerCounterEffect } from './gsap-custom-effects';
 // Register Custom GSAP Effects
 registerCounterEffect();
 
+let animTypes = ["display-none", "display-block", "display-flex", "display-grid", "display-inline", "display-inline-block", "display-inline-flex", "display-inline-grid", "fade-from", "fade-to", "grow-from", "grow-to", "shrink-from", "shrink-to", "slide-from", "slide-to", "flip-from", "flip-to", "text-fade-from", "text-fade-to", "text-grow-from", "text-grow-to", "text-shrink-from", "text-shrink-to", "text-slide-from", "text-slide-to", "text-flip-from", "text-flip-to", "any-from", "any-to", "counter", "typewriter"];
+
+export function checkAnimType(animType: string) {
+    return animTypes.includes(animType);
+}
+
 export function setElementTimeline(element, animType: string, animConfig: any = {}) {
     let tl = gsap.timeline({ ease: animConfig.ease });
     if (animConfig)
@@ -31,68 +37,71 @@ export function setElementTimeline(element, animType: string, animConfig: any = 
             case "display-inline-grid":
                 tl.set(element, { display: "inline-grid" });
                 break;
-            case "fade-in":
+            case "fade-from":
                 createAnimationFunction(["opacity"], "from")(tl, element, animConfig);
                 break;
-            case "fade-out":
+            case "fade-to":
                 createAnimationFunction(["opacity"], "to")(tl, element, animConfig);
                 break;
-            case "grow-in":
+            case "grow-from":
                 createAnimationFunction(["scale", "opacity"], "from")(tl, element, animConfig);
                 break;
-            case "grow-out":
+            case "grow-to":
                 createAnimationFunction(["scale", "opacity"], "to")(tl, element, animConfig);
                 break;
-            case "shrink-in":
+            case "shrink-from":
                 createAnimationFunction(["scale", "opacity"], "from")(tl, element, animConfig);
                 break;
-            case "shrink-out":
+            case "shrink-to":
                 createAnimationFunction(["scale", "opacity"], "to")(tl, element, animConfig);
                 break;
-            case "slide-in":
+            case "slide-from":
                 createAnimationFunction(["position-x", "position-y", "opacity"], "from")(tl, element, animConfig);
                 break;
-            case "slide-out":
+            case "slide-to":
                 createAnimationFunction(["position-x", "position-y", "opacity"], "to")(tl, element, animConfig);
                 break;
-            case "flip-in":
+            case "flip-from":
                 createAnimationFunction(["rotation-x", "rotation-y", "opacity"], "from")(tl, element, animConfig);
                 break;
-            case "flip-out":
+            case "flip-to":
                 createAnimationFunction(["rotation-x", "rotation-y", "opacity"], "to")(tl, element, animConfig);
                 break;
-            case "text-fade-in":
+            case "text-fade-from":
                 createAnimationFunction(["opacity"], "from")(tl, element, animConfig);
                 break;
-            case "text-fade-out":
+            case "text-fade-to":
                 createAnimationFunction(["opacity"], "to")(tl, element, animConfig);
                 break;
-            case "text-grow-in":
+            case "text-grow-from":
                 createAnimationFunction(["scale", "opacity"], "from")(tl, element, animConfig);
                 break;
-            case "text-grow-out":
+            case "text-grow-to":
                 createAnimationFunction(["scale", "opacity"], "to")(tl, element, animConfig);
                 break;
-            case "text-shrink-in":
+            case "text-shrink-from":
                 createAnimationFunction(["scale", "opacity"], "from")(tl, element, animConfig);
                 break;
-            case "text-shrink-out":
+            case "text-shrink-to":
                 createAnimationFunction(["scale", "opacity"], "to")(tl, element, animConfig);
                 break;
-            case "text-slide-in":
+            case "text-slide-from":
                 createAnimationFunction(["position-x", "position-y", "opacity"], "from")(tl, element, animConfig);
                 break;
-            case "text-slide-out":
+            case "text-slide-to":
                 createAnimationFunction(["position-x", "position-y", "opacity"], "to")(tl, element, animConfig);
                 break;
-            case "text-flip-in":
+            case "text-flip-from":
                 createAnimationFunction(["rotation-x", "rotation-y", "opacity"], "from")(tl, element, animConfig);
                 break;
-            case "text-flip-out":
+            case "text-flip-to":
                 createAnimationFunction(["rotation-x", "rotation-y", "opacity"], "to")(tl, element, animConfig);
                 break;
-            case "custom":
-                let customFunction = createAnimationFunction(["position-x", "position-y", "position-z", "rotation-x", "rotation-y", "rotation-z", "scale", "opacity"], "to")(tl, element, animConfig);
+            case "any-from":
+                createAnimationFunction(["position-x", "position-y", "position-z", "rotation-x", "rotation-y", "rotation-z", "scale", "opacity"], "from")(tl, element, animConfig);
+                break;
+            case "any-to":
+                createAnimationFunction(["position-x", "position-y", "position-z", "rotation-x", "rotation-y", "rotation-z", "scale", "opacity"], "from")(tl, element, animConfig);
                 break;
             case "counter":
                 createAnimationFunction(["count-to", "count-steps"], "counter")(tl, element, animConfig);

@@ -11,65 +11,73 @@ When the animation should start and end. The default is top 80% bottom 20%. You 
 ===== Group - Toggle Actions =====
 Determines how the linked animation is controlled at the 4 distinct toggle places - onEnter, onLeave, onEnterBack, and onLeaveBack. The default is play none none none. So toggleActions: "play pause resume reset" will play the animation when entering, pause it when leaving, resume it when entering again backwards, and reset (rewind back to the beginning) when scrolling all the way back past the beginning. You can use any of the following keywords for each action: "play", "pause", "resume", "reset", "restart", "complete", "reverse", and "none".
 
-===== Ins and Outs =====
-The variables from Ins is the value that the element will come from, and the Outs is the value that the element will go to.
-For example, opacity of 0 for Ins means that the element will start with opacity 0 and go to the value set inside webflow, and the opposite for Outs.
+===== From =====
+Think of a from() like a backwards tween where you define where the values should START, and then it animates to the current state which is perfect for animating objects onto the screen because you can set them up the way you want them to look at the end and then animate in from elsewhere.
 
-===== Position and Rotation =====
-Don't set those as negative vales, the code will handle that for you.
+===== To =====
+The most common type of animation is a to() tween because it allows you to define the destination values (and most people think in terms of animating to certain values).
 
 ===== Directions =====
 up, down, left, right.
+
+If you are using direction don't set position to negative values, the code will handle that for you.
 
 ===== Split Into =====
 lines, words, letters, elements (works on elements with children).
 
 ===== Timeline Position =====
-https://gsap.com/docs/v3/GSAP/gsap.timeline()/#positioning-animations-in-a-timeline
+https://gsap.com/docs/v3/GSAP/gsap.timeline()/#positioning-animations-from-a-timeline
 
 By default all timelines start at the same time, if you want to start at a different time you can set the position in the timeline.
 
-===== Custom =====
+===== All =====
 You can use any of the available options. -->
+
 <!-- Group -->
 <meta am-settings="group" trigger-start="top 80%" trigger-end="bottom 20%" markers="false" scrub="false" toggle-actions="play none none none">
 <!-- Display -->
-<meta am-settings="display-block" duration="0" ease="none" timeline-position="<">
-<meta am-settings="display-flex" duration="0" ease="none" timeline-position="<">
-<meta am-settings="display-none" duration="0" ease="none" timeline-position="<">
+<meta am-settings="display-none" timeline-position="<">
+<meta am-settings="display-block" timeline-position="<">
+<meta am-settings="display-flex" timeline-position="<">
+<meta am-settings="display-grid" timeline-position="<">
+<meta am-settings="display-inline" timeline-position="<">
+<meta am-settings="display-inline-block" timeline-position="<">
+<meta am-settings="display-inline-flex" timeline-position="<">
+<meta am-settings="display-inline-grid" timeline-position="<">
 <!-- Fade -->
-<meta am-settings="fade-in" duration="1" ease="expo.out" opacity="0" timeline-position="<">
-<meta am-settings="fade-out" duration="1" ease="expo.out" opacity="0" timeline-position="<">
+<meta am-settings="fade-from" duration="1" ease="expo.out" opacity="0" timeline-position="<">
+<meta am-settings="fade-to" duration="1" ease="expo.out" opacity="0" timeline-position="<">
 <!-- Grow -->
-<meta am-settings="grow-in" duration="1" ease="expo.out" scale="0.4" opacity="0" timeline-position="<">
-<meta am-settings="grow-out"duration="1" ease="expo.out" scale="1.2" opacity="0" timeline-position="<">
+<meta am-settings="grow-from" duration="1" ease="expo.out" scale="0.4" opacity="0" timeline-position="<">
+<meta am-settings="grow-to"duration="1" ease="expo.out" scale="1.2" opacity="0" timeline-position="<">
 <!-- Shrink -->
-<meta am-settings="shrink-in" duration="1" ease="expo.out" scale="1.2" opacity="0" timeline-position="<">
-<meta am-settings="shrink-out" duration="1" ease="expo.out" scale="0.4" opacity="0" timeline-position="<">
+<meta am-settings="shrink-from" duration="1" ease="expo.out" scale="1.2" opacity="0" timeline-position="<">
+<meta am-settings="shrink-to" duration="1" ease="expo.out" scale="0.4" opacity="0" timeline-position="<">
 <!-- Slide -->
-<meta am-settings="slide-in" duration="1" ease="expo.out" position-x="4rem" position-y="4rem" direction="up" opacity="0" timeline-position="<">
-<meta am-settings="slide-out" duration="1" ease="expo.out" position-x="4rem" position-y="4rem" direction="up" opacity="0" timeline-position="<">
+<meta am-settings="slide-from" duration="1" ease="expo.out" position-x="4rem" position-y="4rem" direction="up" opacity="0" timeline-position="<">
+<meta am-settings="slide-to" duration="1" ease="expo.out" position-x="4rem" position-y="4rem" direction="up" opacity="0" timeline-position="<">
 <!-- Flip -->
-<meta am-settings="flip-in" duration="1" ease="expo.out" rotation-x="45" rotation-y="45" direction="up" opacity="0" timeline-position="<">
-<meta am-settings="flip-out" duration="1" ease="expo.out" rotation-x="45" rotation-y="45" direction="up" opacity="0" timeline-position="<">
+<meta am-settings="flip-from" duration="1" ease="expo.out" rotation-x="45" rotation-y="45" direction="up" opacity="0" timeline-position="<">
+<meta am-settings="flip-to" duration="1" ease="expo.out" rotation-x="45" rotation-y="45" direction="up" opacity="0" timeline-position="<">
 <!-- Text Fade -->
-<meta am-settings="text-fade-in" duration="1" ease="expo.out" split-into="words" opacity="0" stagger-amount="1" stagger-from="start" timeline-position="<">
-<meta am-settings="text-fade-out" duration="1" ease="expo.out" split-into="words" opacity="0" stagger-amount="1" stagger-from="start" timeline-position="<">
+<meta am-settings="text-fade-from" duration="1" ease="expo.out" split-fromto="words" opacity="0" stagger-amount="1" stagger-from="start" timeline-position="<">
+<meta am-settings="text-fade-to" duration="1" ease="expo.out" split-fromto="words" opacity="0" stagger-amount="1" stagger-from="start" timeline-position="<">
 <!-- Text Grow -->
-<meta am-settings="text-grow-in" duration="1" ease="expo.out" scale="0.4" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
-<meta am-settings="text-grow-out" duration="1" ease="expo.out" scale="1.2" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<meta am-settings="text-grow-from" duration="1" ease="expo.out" scale="0.4" split-fromto="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<meta am-settings="text-grow-to" duration="1" ease="expo.out" scale="1.2" split-fromto="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
 <!-- Text Shrink -->
-<meta am-settings="text-shrink-in" duration="1" ease="expo.out" scale="1.2" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
-<meta am-settings="text-shrink-out" duration="1" ease="expo.out" scale="0.4" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<meta am-settings="text-shrink-from" duration="1" ease="expo.out" scale="1.2" split-fromto="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<meta am-settings="text-shrink-to" duration="1" ease="expo.out" scale="0.4" split-fromto="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
 <!-- Text Slide -->
-<meta am-settings="text-slide-in" duration="1" ease="expo.out" position-x="4rem" position-y="4rem" direction="up" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
-<meta am-settings="text-slide-out" duration="1" ease="expo.out" position-x="4rem" position-y="4rem" direction="up" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<meta am-settings="text-slide-from" duration="1" ease="expo.out" position-x="4rem" position-y="4rem" direction="up" split-fromto="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<meta am-settings="text-slide-to" duration="1" ease="expo.out" position-x="4rem" position-y="4rem" direction="up" split-fromto="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
 <!-- Text Flip -->
-<meta am-settings="text-flip-in" duration="1" ease="expo.out" rotation-x="90" rotation-y="90" direction="up" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
-<meta am-settings="text-flip-out" duration="1" ease="expo.out" rotation-x="90" rotation-y="90" direction="up" split-into="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
-<!-- Custom -->
-<meta am-settings="custom" duration="1" ease="expo.out" scale="1" position-x="0" position-y="0" position-z="0" rotation-x="0" rotation-y="0" rotation-z="0" opacity="1" timeline-position="<">
-<!-- Count To -->
+<meta am-settings="text-flip-from" duration="1" ease="expo.out" rotation-x="90" rotation-y="90" direction="up" split-fromto="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<meta am-settings="text-flip-to" duration="1" ease="expo.out" rotation-x="90" rotation-y="90" direction="up" split-fromto="words" stagger-amount="1" stagger-from="start" opacity="0" timeline-position="<">
+<!-- All -->
+<meta am-settings="any-from" duration="1" ease="expo.out" scale="1" position-x="0" position-y="0" position-z="0" rotation-x="0" rotation-y="0" rotation-z="0" opacity="1" timeline-position="<">
+<meta am-settings="any-to" duration="1" ease="expo.out" scale="1" position-x="0" position-y="0" position-z="0" rotation-x="0" rotation-y="0" rotation-z="0" opacity="1" timeline-position="<">
+<!-- Counter -->
 <meta am-settings="counter" count-to="0" duration="2" count-steps="1" ease="power1" timeline-position="<">
 <!-- Typewriter -->
 <meta am-settings="typewriter" duration="1" repeat="-1" repeat-delay="1" timeline-position="<">
