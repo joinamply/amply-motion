@@ -49,6 +49,9 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
         "rotation-y": { defaultValue: 0, type: 'float' },
         "rotation-z": { defaultValue: 0, type: 'float' },
         "scale": { defaultValue: 1, type: 'float' },
+        "color": { defaultValue: '#000000', type: 'string' },
+        "brightness-from": { defaultValue: '1', type: 'string' },
+        "brightness-to": { defaultValue: '10', type: 'string' },
         "yoyo": { defaultValue: false, type: 'boolean' },
         "repeat": { defaultValue: 0, type: 'float' },
         "repeat-delay": { defaultValue: 0, type: 'float' },
@@ -56,6 +59,7 @@ function createAnimationConfig(el: Element, settingsEl: Element) {
         "timeline-position": { defaultValue: '<', type: 'string' },
         "count-to": { defaultValue: 0, type: 'float' },
         "count-steps": { defaultValue: 1, type: 'float' },
+        "separator": { defaultValue: ',', type: 'string' },
         "words": { defaultValue: '', type: 'string' },
     };
     // Create the config object

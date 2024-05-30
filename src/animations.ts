@@ -3,7 +3,7 @@ import { registerCounterEffect } from './gsap-custom-effects';
 // Register Custom GSAP Effects
 registerCounterEffect();
 
-let animTypes = ["display-none", "display-block", "display-flex", "display-grid", "display-inline", "display-inline-block", "display-inline-flex", "display-inline-grid", "fade-from", "fade-to", "grow-from", "grow-to", "shrink-from", "shrink-to", "slide-from", "slide-to", "flip-from", "flip-to", "text-fade-from", "text-fade-to", "text-grow-from", "text-grow-to", "text-shrink-from", "text-shrink-to", "text-slide-from", "text-slide-to", "text-flip-from", "text-flip-to", "any-from", "any-to", "counter", "typewriter"];
+let animTypes = ["display-none", "display-block", "display-flex", "display-grid", "display-inline", "display-inline-block", "display-inline-flex", "display-inline-grid", "fade-from", "fade-to", "grow-from", "grow-to", "shrink-from", "shrink-to", "slide-from", "slide-to", "flip-from", "flip-to", "text-fade-from", "text-fade-to", "text-grow-from", "text-grow-to", "text-shrink-from", "text-shrink-to", "text-slide-from", "text-slide-to", "text-flip-from", "text-flip-to", "any-from", "any-to", "counter", "typewriter", "text-color-from", "text-color-to", "text-brightness"];
 
 export function checkAnimType(animType: string) {
     return animTypes.includes(animType);
@@ -97,6 +97,16 @@ export function setElementTimeline(element, animType: string, animConfig: any = 
             case "text-flip-to":
                 createAnimationFunction(["rotation-x", "rotation-y", "opacity"], "to")(tl, element, animConfig);
                 break;
+            case "text-color-from":
+                createAnimationFunction(["color"], "from")(tl, element, animConfig);
+                break;
+            case "text-color-to":
+                createAnimationFunction(["color"], "to")(tl, element, animConfig);
+                break;
+            case "text-brightness":
+                animConfig.brightness = true;
+                createAnimationFunction(["brightness"], "fromTo")(tl, element, animConfig);
+                break;
             case "any-from":
                 createAnimationFunction(["position-x", "position-y", "position-z", "rotation-x", "rotation-y", "rotation-z", "scale", "opacity"], "from")(tl, element, animConfig);
                 break;
@@ -127,10 +137,10 @@ export function setElementTimeline(element, animType: string, animConfig: any = 
 
     return tl;
 }
-
-function createAnimationFunction(properties: string[], method: 'from' | 'to' | 'counter') {
+function createAnimationFunction(properties: string[], method: 'from' | 'to' | 'fromTo' | 'counter') {
     return (timeline: gsap.core.Timeline, elToAnimate: Element, config: any) => {
         const animationProperties: any = {};
+        const animationPropertiesFrom: any = {};
         properties.forEach(property => {
             if (config[property] !== undefined) {
                 switch (property) {
@@ -157,6 +167,13 @@ function createAnimationFunction(properties: string[], method: 'from' | 'to' | '
                         break;
                     case "count-steps":
                         animationProperties.increment = config[property];
+                        animationProperties.separator = config["separator"];
+                        break;
+                    case "brightness":
+                        animationPropertiesFrom.webkitFilter = `brightness(${config["brightness-from"]})`;
+                        animationPropertiesFrom.filter = `brightness(${config["brightness-from"]})`;
+                        animationProperties.webkitFilter = `brightness(${config["brightness-to"]})`;
+                        animationProperties.filter = `brightness(${config["brightness-to"]})`;
                         break;
                     default:
                         animationProperties[property] = config[property];
@@ -173,6 +190,11 @@ function createAnimationFunction(properties: string[], method: 'from' | 'to' | '
         if (config["stagger-amount"] !== undefined) {
             animationProperties.stagger = { amount: config["stagger-amount"], from: config["stagger-from"] };
         }
-        timeline[method](elToAnimate, animationProperties, 0);
+        // Use the 'fromTo' method of the timeline
+        if (method === 'fromTo') {
+            timeline.fromTo(elToAnimate, animationPropertiesFrom, animationProperties, 0);
+        } else {
+            timeline[method](elToAnimate, animationProperties, 0);
+        }
     };
 }

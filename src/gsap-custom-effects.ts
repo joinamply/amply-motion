@@ -7,6 +7,7 @@ export function registerCounterEffect() {
         defaults: {
             end: 0,
             duration: 1,
+            separator: ",",
             ease: "power1",
             increment: 1,
         },
@@ -21,7 +22,7 @@ export function registerCounterEffect() {
                 //snap:{innerText:config.increment},
                 modifiers: {
                     innerText: function (innerText) {
-                        return gsap.utils.snap(config.increment, innerText).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        return gsap.utils.snap(config.increment, innerText).toString().replace(/\B(?=(\d{3})+(?!\d))/g, config.separator);
                     }
                 },
                 ease: config.ease
