@@ -3,7 +3,7 @@ import { registerCounterEffect } from './gsap-custom-effects';
 // Register Custom GSAP Effects
 registerCounterEffect();
 
-let animTypes = ["display-none", "display-block", "display-flex", "display-grid", "display-inline", "display-inline-block", "display-inline-flex", "display-inline-grid", "fade-from", "fade-to", "grow-from", "grow-to", "shrink-from", "shrink-to", "slide-from", "slide-to", "flip-from", "flip-to", "text-fade-from", "text-fade-to", "text-grow-from", "text-grow-to", "text-shrink-from", "text-shrink-to", "text-slide-from", "text-slide-to", "text-flip-from", "text-flip-to", "any-from", "any-to", "counter", "typewriter", "text-color-from", "text-color-to", "text-brightness"];
+let animTypes = ["display-none", "display-block", "display-flex", "display-grid", "display-inline", "display-inline-block", "display-inline-flex", "display-inline-grid", "fade-from", "fade-to", "grow-from", "grow-to", "shrink-from", "shrink-to", "slide-from", "slide-to", "flip-from", "flip-to", "text-fade-from", "text-fade-to", "text-grow-from", "text-grow-to", "text-shrink-from", "text-shrink-to", "text-slide-from", "text-slide-to", "text-flip-from", "text-flip-to", "any-from", "any-to", "counter", "typewriter", "text-color-from", "text-color-to", "text-brightness", "marquee"];
 
 export function checkAnimType(animType: string) {
     return animTypes.includes(animType);
@@ -129,6 +129,24 @@ export function setElementTimeline(element, animType: string, animConfig: any = 
                     tl.add(temp);
                 });
                 tl.repeat(animConfig.repeat);
+                break;
+            case "marquee":
+                let listParent = element.parentElement;
+                let list = element;
+                // create two clones of the list and appent it to the parent
+                let listClone1 = list.cloneNode(true);
+                let listClone2 = list.cloneNode(true);
+                listParent.appendChild(listClone1);
+                listParent.appendChild(listClone2);
+                // Set the position x to -100%
+                gsap.set(list, { x: "-100%" });
+                gsap.set(listClone1, { x: "-100%" });
+                gsap.set(listClone2, { x: "-100%" });
+                let temp = gsap.timeline();
+                temp.to(list, { x: "-200%", duration: animConfig.duration, ease: animConfig.ease });
+                temp.to(listClone1, { x: "-200%", duration: animConfig.duration, ease: animConfig.ease }, "<");
+                temp.to(listClone2, { x: "-200%", duration: animConfig.duration, ease: animConfig.ease }, "<");
+                temp.repeat(animConfig.repeat);
                 break;
             default:
                 console.log("Invalid animation type");

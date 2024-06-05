@@ -136,15 +136,15 @@ function getElementoToAnimate(element) {
     let splitInto = element.getAttribute("split-into");
     switch (splitInto) {
         case "lines":
-            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
+            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines", tagName: 'span' });
             elToAnimate = splitType.lines;
             break;
         case "words":
-            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
+            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "words", tagName: 'span' });
             elToAnimate = splitType.words;
             break;
         case "letters":
-            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "lines,words,chars", tagName: 'span' });
+            splitType = new SplitType(`#${element.getAttribute("id")}`, { types: "words,chars", tagName: 'span' });
             elToAnimate = splitType.chars;
             break;
         case "elements":
