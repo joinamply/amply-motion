@@ -125,9 +125,9 @@ let variables: VariablesProperties = {
     'am-scrub': { value: getAttributeAsBoolean(variablesSettings, SCRUB, false), valueType: 'boolean', gsapName: 'scrub' },
     'am-toggle-actions': { value: getAttributeAsString(variablesSettings, TOGGLE_ACTIONS, "play none none reset"), valueType: 'string', gsapName: 'toggleActions' },
     // Custom
-    'am-timeline-position': { value: getAttributeAsString(variablesSettings, TIMELINE_POSITION, "<"), valueType: 'number', gsapName: '' },    
+    'am-timeline-position': { value: getAttributeAsString(variablesSettings, TIMELINE_POSITION, "<"), valueType: 'number', gsapName: '' },
     'am-tween': { value: getAttributeAsString(variablesSettings, AM_TWEEN, "from"), valueType: 'string', gsapName: '' },
-    'am-split-into': { value: getAttributeAsString(variablesSettings, SPLIT_INTO, "none"), valueType: 'string', gsapName: ''},
+    'am-split-into': { value: getAttributeAsString(variablesSettings, SPLIT_INTO, "none"), valueType: 'string', gsapName: '' },
     // Counter
     'am-count-to': { value: getAttributeAsFloat(variablesSettings, COUNT_TO, 0), valueType: 'number', gsapName: 'end' },
     'am-count-steps': { value: getAttributeAsFloat(variablesSettings, COUNT_STEPS, 1), valueType: 'number', gsapName: 'increment' },
@@ -220,13 +220,13 @@ function setElementSettings(element: Element, animation: String) {
                     animProperties[properties[attribute.name].gsapName] = attribute.value;
                 }
                 else if (variables.hasOwnProperty(attribute.name)) {
-                    if (variables[attribute.name].gsapName != ''){
+                    if (variables[attribute.name].gsapName != '') {
                         animVariables[variables[attribute.name].gsapName] = attribute.value;
-                    }   
+                    }
                     // Those are variables not related to the timeline
                     else {
                         animOptions[attribute.name] = attribute.value;
-                    }                     
+                    }
                 }
             }
         }
@@ -276,97 +276,116 @@ function getElementoToAnimate(element) {
 /* ====================
 Start the animations
 ==================== */
-let groups = document.querySelectorAll(`[${GROUP}]`);
+function setGroups() {
+    let groups = document.querySelectorAll(`[${GROUP}]`);
 
-groups.forEach((group, groupIndex) => {
-    let triggerType = group.getAttribute(GROUP) || "scroll";
-    let elements: Element[] = Array.from(group.querySelectorAll(`[${ELEMENT}]`));
+    groups.forEach((group, groupIndex) => {
+        if (group.hasAttribute("am-group-ready")) { return; }
+        let triggerType = group.getAttribute(GROUP) || "scroll";
+        let elements: Element[] = Array.from(group.querySelectorAll(`[${ELEMENT}]`));
 
-    // Group Variables
-    let groupRepeat = group.getAttribute(REPEAT) ? getAttributeAsFloat(group, REPEAT) : variables[REPEAT].value;
-    let groupRepeatDelay = group.getAttribute(REPEAT_DELAY) ? getAttributeAsFloat(group, REPEAT_DELAY) : variables[REPEAT_DELAY].value;
-    let groupYoyo = group.getAttribute(YOYO) ? getAttributeAsBoolean(group, YOYO) : variables[YOYO].value;
-    let groupStart = group.getAttribute(SCROLL_START) ? getAttributeAsString(group, SCROLL_START) : variables[SCROLL_START].value;
-    let groupEnd = group.getAttribute(SCROLL_END) ? getAttributeAsString(group, SCROLL_END) : variables[SCROLL_END].value;
-    let groupMarkers = group.getAttribute(MARKERS) ? getAttributeAsBoolean(group, MARKERS) : variables[MARKERS].value;
-    let groupToggleActions = group.getAttribute(TOGGLE_ACTIONS) ? getAttributeAsString(group, TOGGLE_ACTIONS) : variables[TOGGLE_ACTIONS].value;
+        // Group Variables
+        let groupRepeat = group.getAttribute(REPEAT) ? getAttributeAsFloat(group, REPEAT) : variables[REPEAT].value;
+        let groupRepeatDelay = group.getAttribute(REPEAT_DELAY) ? getAttributeAsFloat(group, REPEAT_DELAY) : variables[REPEAT_DELAY].value;
+        let groupYoyo = group.getAttribute(YOYO) ? getAttributeAsBoolean(group, YOYO) : variables[YOYO].value;
+        let groupStart = group.getAttribute(SCROLL_START) ? getAttributeAsString(group, SCROLL_START) : variables[SCROLL_START].value;
+        let groupEnd = group.getAttribute(SCROLL_END) ? getAttributeAsString(group, SCROLL_END) : variables[SCROLL_END].value;
+        let groupMarkers = group.getAttribute(MARKERS) ? getAttributeAsBoolean(group, MARKERS) : variables[MARKERS].value;
+        let groupToggleActions = group.getAttribute(TOGGLE_ACTIONS) ? getAttributeAsString(group, TOGGLE_ACTIONS) : variables[TOGGLE_ACTIONS].value;
 
-    // Creates the group timeline
-    let groupTl = gsap.timeline({ repeat: groupRepeat, repeatDelay: groupRepeatDelay, yoyo: groupYoyo });
+        // Creates the group timeline
+        let groupTl = gsap.timeline({ repeat: groupRepeat, repeatDelay: groupRepeatDelay, yoyo: groupYoyo });
 
-    // Sort the elements by their order attribute
-    elements = Array.from(elements).sort((a, b) => {
-        let aOrder = parseFloat(a.getAttribute(ELEMENT_ORDER) || "0");
-        let bOrder = parseFloat(b.getAttribute(ELEMENT_ORDER) || "0");
-        return aOrder - bOrder;
-    });
+        // Sort the elements by their order attribute
+        elements = Array.from(elements).sort((a, b) => {
+            let aOrder = parseFloat(a.getAttribute(ELEMENT_ORDER) || "0");
+            let bOrder = parseFloat(b.getAttribute(ELEMENT_ORDER) || "0");
+            return aOrder - bOrder;
+        });
 
-    // Loop through the elements and create the animations
-    elements.forEach((element, elementIndex) => {
-        let elementTl = gsap.timeline();
-        // Check if the element has an id applied and if not, apply one
-        if (!element.hasAttribute("id")) { element.setAttribute("id", `group-${groupIndex}-el-${elementIndex}`); }
-        // Get the type of animation and...
-        let animType = getAttributeAsString(element, ELEMENT, "none");
-        let animProperties = {};
-        let animVariables = {};
-        let animOptions = {};
-        setElementSettings(element, animType)(animProperties, animVariables, animOptions);
-        let elementToAnimate = getElementoToAnimate(element);
-        // Create the timeline
-        elementTl = setElementTimeline(elementToAnimate, animType, animProperties, animVariables, animOptions[AM_TWEEN]);
-        // Add the timeline to the group timeline
-        groupTl.add(elementTl, animOptions[TIMELINE_POSITION]);
-    });
+        // Loop through the elements and create the animations
+        elements.forEach((element, elementIndex) => {
+            let elementTl = gsap.timeline();
+            // Check if the element has an id applied and if not, apply one
+            if (!element.hasAttribute("id")) { element.setAttribute("id", `group-${groupIndex}-el-${elementIndex}`); }
+            // Get the type of animation and...
+            let animType = getAttributeAsString(element, ELEMENT, "none");
+            let animProperties = {};
+            let animVariables = {};
+            let animOptions = {};
+            setElementSettings(element, animType)(animProperties, animVariables, animOptions);
+            let elementToAnimate = getElementoToAnimate(element);
+            // Create the timeline
+            elementTl = setElementTimeline(elementToAnimate, animType, animProperties, animVariables, animOptions[AM_TWEEN]);
+            // Add the timeline to the group timeline
+            groupTl.add(elementTl, animOptions[TIMELINE_POSITION]);
+            group.setAttribute("am-group-ready", "true");
+        });
 
-    switch (triggerType) {
-        case "hover-in":
-            groupTl.pause();
-            group.addEventListener("mouseenter", () => { groupTl.play(); });
-            break;
-        case "hover-in-out":
-            groupTl.pause();
-            group.addEventListener("mouseenter", () => { groupTl.play(); });
-            group.addEventListener("mouseleave", () => { groupTl.reverse(); });
-            break;
-        case "click":
-            groupTl.pause();
-            group.addEventListener("click", () => { groupTl.play(); });
-            break;
-        default:
-            let scrub;
-            if (group.hasAttribute(SCRUB)) {
-                if (group.getAttribute(SCRUB) === "true") { scrub = true; }
-                else { scrub = parseFloat(group.getAttribute(SCRUB) as string); }
-            }
-            let tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: group,
-                    start: groupStart,
-                    end: groupEnd,
-                    markers: groupMarkers,
-                    scrub: scrub,
-                    toggleActions: scrub !== false ? groupToggleActions : "play none none reverse"
+        switch (triggerType) {
+            case "hover-in":
+                groupTl.pause();
+                group.addEventListener("mouseenter", () => { groupTl.play(); });
+                break;
+            case "hover-in-out":
+                groupTl.pause();
+                group.addEventListener("mouseenter", () => { groupTl.play(); });
+                group.addEventListener("mouseleave", () => { groupTl.reverse(); });
+                break;
+            case "click":
+                groupTl.pause();
+                group.addEventListener("click", () => { groupTl.play(); });
+                break;
+            default:
+                let scrub;
+                if (group.hasAttribute(SCRUB)) {
+                    if (group.getAttribute(SCRUB) === "true") { scrub = true; }
+                    else { scrub = parseFloat(group.getAttribute(SCRUB) as string); }
                 }
-            });
-            tl.add(groupTl);
-            break;
-    }
-    // Reset the group opacity back to 1
-    gsap.set(group, { opacity: 1 });
-});
+                let tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: group,
+                        start: groupStart,
+                        end: groupEnd,
+                        markers: groupMarkers,
+                        scrub: scrub,
+                        toggleActions: scrub !== false ? groupToggleActions : "play none none reverse"
+                    }
+                });
+                tl.add(groupTl);
+                break;
+        }
+        // Reset the group opacity back to 1
+        gsap.set(group, { opacity: 1 });
+    });
+}
+
+setGroups();
 
 /* ====================
 Refresh ScrollTrigger when page height change
 ==================== */
 let lastPageHeight = document.documentElement.scrollHeight;
-const checkPageHeight = () => {
+
+const refreshScrollTrigger = () => {
     const currentPageHeight = document.documentElement.scrollHeight;
     if (lastPageHeight !== currentPageHeight) {
-        ScrollTrigger.refresh();
-        // Reset the group opacity back to 1
-        gsap.set(groups, { opacity: 1 });
+        console.log("Page height changed!");
+        ScrollTrigger.refresh();  // Simplified access
+        setGroups();
+        gsap.set(`[${GROUP}]`, { opacity: 1 });
     }
     lastPageHeight = currentPageHeight;
 };
-const intervalId = setInterval(checkPageHeight, 1000); // check every second
+
+// Listen for resize events
+window.addEventListener("resize", refreshScrollTrigger);
+
+// Observe content changes (mutations)
+const observer = new MutationObserver(refreshScrollTrigger);
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+
+// Clear interval on page unload (to prevent memory leaks)
+window.addEventListener("beforeunload", () => {
+    observer.disconnect();
+});
