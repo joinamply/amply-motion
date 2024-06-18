@@ -364,6 +364,8 @@ const checkPageHeight = () => {
     const currentPageHeight = document.documentElement.scrollHeight;
     if (lastPageHeight !== currentPageHeight) {
         ScrollTrigger.refresh();
+        // Reset the group opacity back to 1
+        gsap.set(groups, { opacity: 1 });
     }
     lastPageHeight = currentPageHeight;
 };
