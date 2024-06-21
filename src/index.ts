@@ -122,6 +122,7 @@ let variablesGroup: VariablesProperties = {
     'am-repeat-delay': { value: getAttributeAsFloat(settingsGroupVariables, REPEAT_DELAY, 0), valueType: 'number', gsapName: 'repeatDelay' },
     'am-yoyo': { value: getAttributeAsBoolean(settingsGroupVariables, YOYO, false), valueType: 'boolean', gsapName: 'yoyo' },
     'am-hover-pause': { value: getAttributeAsBoolean(settingsGroupVariables, HOVER_PAUSE, false), valueType: 'boolean', gsapName: '' },
+    'am-scrub': { value: getAttributeAsBoolean(settingsGroupVariables, SCRUB, false), valueType: 'boolean', gsapName: 'scrub' },
 };
 const settingsElementVariables = document.querySelector('[am-settings="element-variables"]')!;
 let variablesElement: VariablesProperties = {
@@ -130,11 +131,10 @@ let variablesElement: VariablesProperties = {
     'am-duration': { value: getAttributeAsFloat(settingsElementVariables, DURATION, 1), valueType: 'number', gsapName: 'duration' },
     'am-repeat': { value: getAttributeAsFloat(settingsElementVariables, REPEAT, 0), valueType: 'number', gsapName: 'repeat' },
     'am-repeat-delay': { value: getAttributeAsFloat(settingsElementVariables, REPEAT_DELAY, 0), valueType: 'number', gsapName: 'repeatDelay' },
-    'am-stagger-amount': { value: getAttributeAsFloat(settingsElementVariables, STAGGER_AMOUNT, 0.1), valueType: 'number', gsapName: 'stagger' },
-    'am-stagger-from': { value: getAttributeAsString(settingsElementVariables, STAGGER_FROM, "center"), valueType: 'string', gsapName: 'from' },
+    'am-stagger-amount': { value: getAttributeAsFloat(settingsElementVariables, STAGGER_AMOUNT, 0.1), valueType: 'number', gsapName: 'staggerAmount' },
+    'am-stagger-from': { value: getAttributeAsString(settingsElementVariables, STAGGER_FROM, "center"), valueType: 'string', gsapName: 'staggerFrom' },
     'am-yoyo': { value: getAttributeAsBoolean(settingsElementVariables, YOYO, false), valueType: 'boolean', gsapName: 'yoyo' },
     'am-ease': { value: getAttributeAsString(settingsElementVariables, EASE, "power1.inOut"), valueType: 'string', gsapName: 'ease' },
-    'am-scrub': { value: getAttributeAsBoolean(settingsElementVariables, SCRUB, false), valueType: 'boolean', gsapName: 'scrub' },
     // Custom
     'am-element-order': { value: getAttributeAsFloat(settingsElementVariables, ELEMENT_ORDER, 0), valueType: 'number', gsapName: '' },
     'am-timeline-position': { value: getAttributeAsString(settingsElementVariables, TIMELINE_POSITION, "<"), valueType: 'number', gsapName: '' },
@@ -299,13 +299,18 @@ function configureElement(element: Element, animation: String) {
         if (!elementVariables.hasOwnProperty('ease')) { elementVariables['ease'] = variablesElement[EASE].value; }
         if (!elementVariables.hasOwnProperty(TIMELINE_POSITION)) { elementVariables[TIMELINE_POSITION] = variablesElement[TIMELINE_POSITION].value; }
         if (!elementVariables.hasOwnProperty(TWEEN)) { elementVariables[TWEEN] = variablesElement[TWEEN].value; }
+        // 
+        if (!elementVariables.hasOwnProperty('staggerFrom')) { elementVariables['staggerFrom'] = variablesElement[STAGGER_FROM].value; }
     }
 }
 
-function getElementoToAnimate(element) {
+function getElementoToAnimate(element, elementVariables) {
     let elementToAnimate;
     let splitType: SplitType;
-    let splitInto = element.getAttribute(SPLIT_INTO);
+    let splitInto = "elements"
+    if(elementVariables.hasOwnProperty(SPLIT_INTO)) {
+        splitInto = elementVariables[SPLIT_INTO];
+    }
     // If split into doesn't exists return the element
     if (!splitInto) { return element; }
     // If it does return based on the value
@@ -365,7 +370,7 @@ function initializeGroups() {
             let elementProperties = {};
             let elementVariables = {};
             configureElement(element, animType)(elementProperties, elementVariables);
-            let elementToAnimate = getElementoToAnimate(element);
+            let elementToAnimate = getElementoToAnimate(element, elementVariables);
             // Create the timeline
             elementTl = setElementTimeline(elementToAnimate, animType, elementProperties, elementVariables, elementVariables[TWEEN]);
             // Check if screen width is above 991 pixels
@@ -397,9 +402,10 @@ function initializeGroups() {
                 break;
             default:
                 let scrub;
-                if (group.hasAttribute(SCRUB)) {
-                    if (group.getAttribute(SCRUB) === "true") { scrub = true; }
-                    else { scrub = parseFloat(group.getAttribute(SCRUB) as string); }
+                if (groupVariables.hasOwnProperty(SCRUB)) {
+                    scrub = groupVariables[SCRUB];
+                    if (scrub === "true") { scrub = true; }
+                    else { scrub = parseFloat(groupVariables[SCRUB] as string); }
                 }
                 let scrollTl = gsap.timeline({
                     scrollTrigger: {

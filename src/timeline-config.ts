@@ -83,6 +83,11 @@ export function setElementTimeline(element, animType: string, elementProperties:
                 finalProperties["webkitFilter"] = `brightness(${value})`;
                 delete finalProperties["brightness"];
             }
+            if(finalProperties.hasOwnProperty("staggerAmount")) {
+                finalProperties["stagger"] = { amount: finalProperties["staggerAmount"], from: finalProperties["staggerFrom"]};
+                delete finalProperties["staggerAmount"];
+                delete finalProperties["staggerFrom"];
+            }
             // Configure the timeline
             tl[tween](element, finalProperties, 0);
             break;

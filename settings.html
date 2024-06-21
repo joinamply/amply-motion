@@ -1,3 +1,28 @@
+<!-- 
+To check all ease options available visit:
+https://gsap.com/docs/v3/Eases/
+    
+===== Triggers =====
+scroll, hover-in, hover-in-out(reverse the anim on out), click.
+    
+===== ScrollTrigger =====
+When the animation should start and end. The default is top 80% bottom 20%. You can use any of the following keywords for each trigger: top, bottom, left, right, center, or a number in pixels or percentage.
+    
+===== Toggle Actions =====
+Determines how the linked animation is controlled at the 4 distinct toggle places - onEnter, onLeave, onEnterBack, and onLeaveBack. The default is play none none none. So toggleActions: "play pause resume reset" will play the animation when entering, pause it when leaving, resume it when entering again backwards, and reset (rewind back to the beginning) when scrolling all the way back past the beginning. You can use any of the following keywords for each action: "play", "pause", "resume", "reset", "restart", "complete", "reverse", and "none".
+    
+===== Directions =====
+up, down, left, right.
+    
+===== Split Into =====
+lines, words, letters, elements (works on elements with children).
+    
+===== Timeline Position =====
+https://gsap.com/docs/v3/GSAP/gsap.timeline()/#positioning-animations-from-a-timeline
+    
+By default all timelines start at the same time, if you want to start at a different time you can set the position in the timeline.
+-->
+
 <!-- Variables - Group -->
 <meta am-settings="group-variables"
 am-trigger="scroll"
@@ -9,6 +34,7 @@ am-yoyo="false"
 am-repeat="0"
 am-repeat-delay="0"
 am-hover-pause="false"
+am-scrub="false"
 >
 
 <!-- Variables - Element -->
@@ -23,7 +49,6 @@ am-stagger-from="start"
 am-yoyo="false"
 am-split-into="none"
 am-ease="power2.out"
-am-scrub="false"
 am-timeline-position="<"
 am-tween="from"
 am-var-target="element"
