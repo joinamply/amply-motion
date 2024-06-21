@@ -1,8 +1,19 @@
-<!-- Variables -->
-<meta am-settings="variables"
+<!-- Variables - Group -->
+<meta am-settings="group-variables"
+am-trigger="scroll"
 am-markers="false"
-am-scroll-start="top 80%"
-am-scroll-end="bottom 20%"
+am-scroll-start="top 20%"
+am-scroll-end="bottom 80%"
+am-toggle-actions="play none none none"
+am-yoyo="false"
+am-repeat="0"
+am-repeat-delay="0"
+am-hover-pause="false"
+>
+
+<!-- Variables - Element -->
+<meta am-settings="element-variables"
+am-element-order="0"
 am-delay="0"
 am-duration="1"
 am-repeat="0"
@@ -13,14 +24,14 @@ am-yoyo="false"
 am-split-into="none"
 am-ease="power2.out"
 am-scrub="false"
-am-toggle-actions="play none none none"
 am-timeline-position="<"
 am-tween="from"
-am-animation="none"
+am-var-target="element"
+am-hover-pause="false"
 >
 
-<!-- Properties -->
-<meta am-settings="properties"
+<!-- Properties - Element -->
+<meta am-settings="element-properties"
 am-display="block"
 am-margin-top="0"
 am-margin-bottom="0"
@@ -65,7 +76,7 @@ am-brightness="1"
 >
 
 <!-- Counter -->
-<meta am-settings="counter"
+<meta am-element-settings="counter"
 am-tween="counter"
 am-count-to="50"
 am-duration="2"
@@ -75,7 +86,7 @@ am-ease="power1"
 >
 
 <!-- Typewriter -->
-<meta am-settings="typewriter"
+<meta am-element-settings="typewriter"
 am-duration="1"
 am-repeat="-1"
 am-repeat-delay="1"
@@ -83,21 +94,14 @@ am-words="word 1, word 2, word 3"
 >
 
 <!-- Marquee -->
-<meta am-settings="marquee"
+<meta am-group-settings="marquee"
+am-scroll-start="top bottom"
+am-scroll-end="bottom bottom"
+>
+<meta am-element-settings="marquee"
 am-duration="20"
 am-ease="none"
 am-repeat="-1"
 am-direction="left"
 am-hover-stop="false"
->
-
-<!-- Test -->
-<meta am-settings="test"
-am-duration="4"
-am-ease="none"
-am-repeat="-1"
-am-yoyo="true"
-am-position-x="10rem"
-am-position-y="10rem"
-am-tween = "to"
 >
