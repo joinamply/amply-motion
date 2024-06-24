@@ -453,7 +453,6 @@ function initializeGroups() {
                 for (let trigger of groupTriggers) {
                     trigger.addEventListener("click", () => { groupTl.play(); });
                 }
-                // groupTriggers.addEventListener("click", () => { groupTl.play(); });
                 break;
             case "click-toggle":
                 groupTl.pause();
@@ -491,8 +490,10 @@ function initializeGroups() {
                 if (window.innerWidth > 991) {
                     // Now if the element has the pause on hover attribute
                     if (group.hasAttribute(HOVER_PAUSE) && group.getAttribute(HOVER_PAUSE) === 'true') {
-                        groupTriggers.addEventListener("mouseenter", () => { scrollTl.pause(); });
-                        groupTriggers.addEventListener("mouseleave", () => { scrollTl.play(); });
+                        for (let trigger of groupTriggers) {
+                            trigger.addEventListener("mouseenter", () => { scrollTl.pause(); });
+                            trigger.addEventListener("mouseleave", () => { scrollTl.play(); });
+                        }
                     }
                 }
                 scrollTl.add(groupTl);
