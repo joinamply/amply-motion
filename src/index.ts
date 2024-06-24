@@ -94,7 +94,11 @@ const POSITION_Z = "am-position-z";
 const ROTATION_X = "am-rotation-x";
 const ROTATION_Y = "am-rotation-y";
 const ROTATION_Z = "am-rotation-z";
-const SCALE = "am-scale";
+const SCALE_X = "am-scale-x";
+const SCALE_Y = "am-scale-y";
+const SCALE_Z = "am-scale-z";
+const SKEW_X = "am-skew-x";
+const SKEW_Y = "am-skew-y";
 const BRIGHTNESS = "am-brightness";
 
 /* ====================
@@ -197,7 +201,11 @@ let propertiesElement: VariablesProperties = {
     'am-rotation-x': { value: getAttributeAsString(settingsElementProperties, ROTATION_X, "0"), gsapName: 'rotationX' },
     'am-rotation-y': { value: getAttributeAsString(settingsElementProperties, ROTATION_Y, "0"), gsapName: 'rotationY' },
     'am-rotation-z': { value: getAttributeAsString(settingsElementProperties, ROTATION_Z, "0"), gsapName: 'rotationZ' },
-    'am-scale': { value: getAttributeAsString(settingsElementProperties, SCALE, "1"), gsapName: 'scale' },
+    'am-scale-x': { value: getAttributeAsString(settingsElementProperties, SCALE_X, "1"), gsapName: 'scaleX' },
+    'am-scale-y': { value: getAttributeAsString(settingsElementProperties, SCALE_Y, "1"), gsapName: 'scaleY' },
+    'am-scale-z': { value: getAttributeAsString(settingsElementProperties, SCALE_Z, "1"), gsapName: 'scaleZ' },
+    'am-skew-x': { value: getAttributeAsString(settingsElementProperties, SKEW_X, "0"), gsapName: 'skewX' },
+    'am-skew-y': { value: getAttributeAsString(settingsElementProperties, SKEW_Y, "0"), gsapName: 'skewY' },
     'am-brightness': { value: getAttributeAsString(settingsElementProperties, BRIGHTNESS, "1"), gsapName: 'brightness' },
 };
 
