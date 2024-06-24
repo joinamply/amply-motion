@@ -61,6 +61,7 @@ export function setElementTimeline(element, animType: string, elementProperties:
             tl.add(marqueeTl);
             break;
         default:
+            // Change the element if the target is specified and remove the reference from the properties
             if (elementProperties.hasOwnProperty("target")) {
                 element = elementProperties["target"];
                 delete elementProperties["target"];
@@ -68,9 +69,15 @@ export function setElementTimeline(element, animType: string, elementProperties:
             // Combine the properties and variables
             let finalProperties = {};
             finalProperties = { ...elementProperties, ...elementVariables };
-            // Remove variables that the name starts with am-
+            // Check for Set properties and also remove the am- properties
             for (let key in finalProperties) {
-                if (key.startsWith("am-")) {
+                // Check for Set properties
+                if (key.startsWith("am-set-")) {
+                    let gsapName = key.replace("am-set-", "");
+                    gsap.set(element, { [gsapName]: finalProperties[key] });
+                    delete finalProperties[key];
+                }
+                else if (key.startsWith("am-")) {
                     delete finalProperties[key];
                 }
             }
@@ -81,13 +88,16 @@ export function setElementTimeline(element, animType: string, elementProperties:
                 gsap.set(element, { filter: 'brightness(1)', webkitFilter: 'brightness(1)' });
                 finalProperties["filter"] = `brightness(${value})`;
                 finalProperties["webkitFilter"] = `brightness(${value})`;
-                delete finalProperties["brightness"];
+                
             }
+            // Check for stagger properties
             if(finalProperties.hasOwnProperty("staggerAmount")) {
                 finalProperties["stagger"] = { amount: finalProperties["staggerAmount"], from: finalProperties["staggerFrom"]};
-                delete finalProperties["staggerAmount"];
-                delete finalProperties["staggerFrom"];
             }
+            // Remove properties that are not needed
+            delete finalProperties["brightness"];
+            delete finalProperties["staggerAmount"];
+            delete finalProperties["staggerFrom"];
             // Configure the timeline
             tl[tween](element, finalProperties, 0);
             break;

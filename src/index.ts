@@ -18,16 +18,18 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin);
 /* ====================
 Naming
 ==================== */
+// Variables - Group
 const GROUP = 'am-group';
 const ELEMENT = 'am-element';
 const ELEMENT_ORDER = 'am-element-order';
 const GROUP_READY = 'am-group-ready';
-// Variables - Group
 const MARKERS = "am-markers";
 const SCROLL_START = "am-scroll-start";
 const SCROLL_END = "am-scroll-end";
 const TOGGLE_ACTIONS = "am-toggle-actions";
 const TRIGGER = "am-trigger";
+const GROUP_TRIGGER = "am-group-trigger";
+const GROUP_TARGET = "am-group-target";
 // Variables - Element
 const DELAY = "am-delay";
 const DURATION = "am-duration";
@@ -100,7 +102,6 @@ Interfaces
 ==================== */
 interface VariableProperty {
     value: any;
-    valueType: 'string' | 'number' | 'boolean';
     gsapName: string;
 }
 interface VariablesProperties {
@@ -114,87 +115,90 @@ Variables & Properties
 // Variables
 const settingsGroupVariables = document.querySelector('[am-settings="group-variables"]')!;
 let variablesGroup: VariablesProperties = {
-    'am-markers': { value: getAttributeAsBoolean(settingsGroupVariables, MARKERS, false), valueType: 'boolean', gsapName: 'markers' },
-    'am-scroll-start': { value: getAttributeAsString(settingsGroupVariables, SCROLL_START, "top 20%"), valueType: 'string', gsapName: 'start' },
-    'am-scroll-end': { value: getAttributeAsString(settingsGroupVariables, SCROLL_END, "bottom 80%"), valueType: 'string', gsapName: 'end' },
-    'am-toggle-actions': { value: getAttributeAsString(settingsGroupVariables, TOGGLE_ACTIONS, "play none none none"), valueType: 'string', gsapName: 'toggleActions' },
-    'am-repeat': { value: getAttributeAsFloat(settingsGroupVariables, REPEAT, 0), valueType: 'number', gsapName: 'repeat' },
-    'am-repeat-delay': { value: getAttributeAsFloat(settingsGroupVariables, REPEAT_DELAY, 0), valueType: 'number', gsapName: 'repeatDelay' },
-    'am-yoyo': { value: getAttributeAsBoolean(settingsGroupVariables, YOYO, false), valueType: 'boolean', gsapName: 'yoyo' },
-    'am-hover-pause': { value: getAttributeAsBoolean(settingsGroupVariables, HOVER_PAUSE, false), valueType: 'boolean', gsapName: '' },
-    'am-scrub': { value: getAttributeAsBoolean(settingsGroupVariables, SCRUB, false), valueType: 'boolean', gsapName: 'scrub' },
+    'am-markers': { value: getAttributeAsBoolean(settingsGroupVariables, MARKERS, false), gsapName: '' },
+    'am-scroll-start': { value: getAttributeAsString(settingsGroupVariables, SCROLL_START, "top 20%"), gsapName: '' },
+    'am-scroll-end': { value: getAttributeAsString(settingsGroupVariables, SCROLL_END, "bottom 80%"), gsapName: '' },
+    'am-toggle-actions': { value: getAttributeAsString(settingsGroupVariables, TOGGLE_ACTIONS, "play none none none"), gsapName: '' },
+    'am-repeat': { value: getAttributeAsFloat(settingsGroupVariables, REPEAT, 0), gsapName: '' },
+    'am-repeat-delay': { value: getAttributeAsFloat(settingsGroupVariables, REPEAT_DELAY, 0), gsapName: '' },
+    'am-yoyo': { value: getAttributeAsBoolean(settingsGroupVariables, YOYO, false), gsapName: '' },
+    'am-hover-pause': { value: getAttributeAsBoolean(settingsGroupVariables, HOVER_PAUSE, false), gsapName: '' },
+    'am-scrub': { value: getAttributeAsBoolean(settingsGroupVariables, SCRUB, false), gsapName: '' },
+    'am-group-trigger': { value: getAttributeAsString(settingsGroupVariables, GROUP_TRIGGER, "scroll"), gsapName: '' },
+    'am-group-target': { value: getAttributeAsString(settingsGroupVariables, GROUP_TARGET, ""), gsapName: '' },
+    'am-trigger': { value: getAttributeAsString(settingsGroupVariables, TRIGGER, "scroll"), gsapName: '' },
 };
 const settingsElementVariables = document.querySelector('[am-settings="element-variables"]')!;
 let variablesElement: VariablesProperties = {
     // Gsap
-    'am-delay': { value: getAttributeAsFloat(settingsElementVariables, DELAY, 0), valueType: 'number', gsapName: 'delay' },
-    'am-duration': { value: getAttributeAsFloat(settingsElementVariables, DURATION, 1), valueType: 'number', gsapName: 'duration' },
-    'am-repeat': { value: getAttributeAsFloat(settingsElementVariables, REPEAT, 0), valueType: 'number', gsapName: 'repeat' },
-    'am-repeat-delay': { value: getAttributeAsFloat(settingsElementVariables, REPEAT_DELAY, 0), valueType: 'number', gsapName: 'repeatDelay' },
-    'am-stagger-amount': { value: getAttributeAsFloat(settingsElementVariables, STAGGER_AMOUNT, 0.1), valueType: 'number', gsapName: 'staggerAmount' },
-    'am-stagger-from': { value: getAttributeAsString(settingsElementVariables, STAGGER_FROM, "center"), valueType: 'string', gsapName: 'staggerFrom' },
-    'am-yoyo': { value: getAttributeAsBoolean(settingsElementVariables, YOYO, false), valueType: 'boolean', gsapName: 'yoyo' },
-    'am-ease': { value: getAttributeAsString(settingsElementVariables, EASE, "power1.inOut"), valueType: 'string', gsapName: 'ease' },
+    'am-delay': { value: getAttributeAsFloat(settingsElementVariables, DELAY, 0), gsapName: 'delay' },
+    'am-duration': { value: getAttributeAsFloat(settingsElementVariables, DURATION, 1), gsapName: 'duration' },
+    'am-repeat': { value: getAttributeAsFloat(settingsElementVariables, REPEAT, 0), gsapName: 'repeat' },
+    'am-repeat-delay': { value: getAttributeAsFloat(settingsElementVariables, REPEAT_DELAY, 0), gsapName: 'repeatDelay' },
+    'am-stagger-amount': { value: getAttributeAsFloat(settingsElementVariables, STAGGER_AMOUNT, 0.1), gsapName: 'staggerAmount' },
+    'am-stagger-from': { value: getAttributeAsString(settingsElementVariables, STAGGER_FROM, "center"), gsapName: 'staggerFrom' },
+    'am-yoyo': { value: getAttributeAsBoolean(settingsElementVariables, YOYO, false), gsapName: 'yoyo' },
+    'am-ease': { value: getAttributeAsString(settingsElementVariables, EASE, "power1.inOut"), gsapName: 'ease' },
     // Custom
-    'am-element-order': { value: getAttributeAsFloat(settingsElementVariables, ELEMENT_ORDER, 0), valueType: 'number', gsapName: '' },
-    'am-timeline-position': { value: getAttributeAsString(settingsElementVariables, TIMELINE_POSITION, "<"), valueType: 'number', gsapName: '' },
-    'am-tween': { value: getAttributeAsString(settingsElementVariables, TWEEN, "from"), valueType: 'string', gsapName: '' },
-    'am-split-into': { value: getAttributeAsString(settingsElementVariables, SPLIT_INTO, "none"), valueType: 'string', gsapName: '' },
-    'am-var-target': { value: getAttributeAsString(settingsElementVariables, VAR_TARGET, ""), valueType: 'string', gsapName: '' },
-    'am-hover-pause': { value: getAttributeAsBoolean(settingsGroupVariables, HOVER_PAUSE, false), valueType: 'boolean', gsapName: '' },
+    'am-element-order': { value: getAttributeAsFloat(settingsElementVariables, ELEMENT_ORDER, 0), gsapName: '' },
+    'am-timeline-position': { value: getAttributeAsString(settingsElementVariables, TIMELINE_POSITION, "<"), gsapName: '' },
+    'am-tween': { value: getAttributeAsString(settingsElementVariables, TWEEN, "from"), gsapName: '' },
+    'am-split-into': { value: getAttributeAsString(settingsElementVariables, SPLIT_INTO, "none"), gsapName: '' },
+    'am-var-target': { value: getAttributeAsString(settingsElementVariables, VAR_TARGET, ""), gsapName: '' },
+    'am-hover-pause': { value: getAttributeAsBoolean(settingsGroupVariables, HOVER_PAUSE, false), gsapName: '' },
     // Counter
-    'am-count-to': { value: getAttributeAsFloat(settingsElementVariables, COUNT_TO, 0), valueType: 'number', gsapName: 'end' },
-    'am-count-steps': { value: getAttributeAsFloat(settingsElementVariables, COUNT_STEPS, 1), valueType: 'number', gsapName: 'increment' },
-    'am-separator': { value: getAttributeAsString(settingsElementVariables, SEPARATOR, ","), valueType: 'string', gsapName: 'separator' },
+    'am-count-to': { value: getAttributeAsFloat(settingsElementVariables, COUNT_TO, 0), gsapName: 'end' },
+    'am-count-steps': { value: getAttributeAsFloat(settingsElementVariables, COUNT_STEPS, 1), gsapName: 'increment' },
+    'am-separator': { value: getAttributeAsString(settingsElementVariables, SEPARATOR, ","), gsapName: 'separator' },
     // Typewriter
-    'am-words': { value: getAttributeAsString(settingsElementVariables, WORDS, "word 1, word 2, word 3"), valueType: 'string', gsapName: 'typewriter-words' },
+    'am-words': { value: getAttributeAsString(settingsElementVariables, WORDS, "word 1, word 2, word 3"), gsapName: 'typewriter-words' },
     // Marquee
-    'am-direction': { value: getAttributeAsString(settingsElementVariables, DIRECTION, "left"), valueType: 'string', gsapName: 'direction' },
+    'am-direction': { value: getAttributeAsString(settingsElementVariables, DIRECTION, "left"), gsapName: 'direction' },
 };
 // Properties
 const settingsElementProperties = document.querySelector('[am-settings="element-properties"]')!;
-let properties: VariablesProperties = {
-    'am-display': { value: getAttributeAsString(settingsElementProperties, DISPLAY, "block"), valueType: 'string', gsapName: 'display' },
-    'am-margin-left': { value: getAttributeAsString(settingsElementProperties, MARGIN_LEFT, "0rem"), valueType: 'string', gsapName: 'marginLeft' },
-    'am-margin-rigth': { value: getAttributeAsString(settingsElementProperties, MARGIN_RIGHT, "0rem"), valueType: 'string', gsapName: 'marginRight' },
-    'am-margin-top': { value: getAttributeAsString(settingsElementProperties, MARGIN_TOP, "0rem"), valueType: 'string', gsapName: 'marginTop' },
-    'am-margin-bottom': { value: getAttributeAsString(settingsElementProperties, MARGIN_BOTTOM, "0rem"), valueType: 'string', gsapName: 'marginBottom' },
-    'am-padding-left': { value: getAttributeAsString(settingsElementProperties, PADDING_LEFT, "0rem"), valueType: 'string', gsapName: 'paddingLeft' },
-    'am-padding-right': { value: getAttributeAsString(settingsElementProperties, PADDING_RIGHT, "0rem"), valueType: 'string', gsapName: 'paddingRight' },
-    'am-padding-top': { value: getAttributeAsString(settingsElementProperties, PADDING_TOP, "0rem"), valueType: 'string', gsapName: 'paddingTop' },
-    'am-padding-bottom': { value: getAttributeAsString(settingsElementProperties, PADDING_BOTTOM, "0rem"), valueType: 'string', gsapName: 'paddingBottom' },
-    'am-width': { value: getAttributeAsString(settingsElementProperties, WIDTH, "auto"), valueType: 'string', gsapName: 'width' },
-    'am-height': { value: getAttributeAsString(settingsElementProperties, HEIGHT, "auto"), valueType: 'string', gsapName: 'height' },
-    'am-left': { value: getAttributeAsString(settingsElementProperties, LEFT, "auto"), valueType: 'string', gsapName: 'left' },
-    'am-right': { value: getAttributeAsString(settingsElementProperties, RIGHT, "auto"), valueType: 'string', gsapName: 'right' },
-    'am-top': { value: getAttributeAsString(settingsElementProperties, TOP, "auto"), valueType: 'string', gsapName: 'top' },
-    'am-bottom': { value: getAttributeAsString(settingsElementProperties, BOTTOM, "auto"), valueType: 'string', gsapName: 'bottom' },
-    'am-color': { value: getAttributeAsString(settingsElementProperties, COLOR, "#000000"), valueType: 'string', gsapName: 'color' },
-    'am-background-color': { value: getAttributeAsString(settingsElementProperties, BACKGROUND_COLOR, "#000000"), valueType: 'string', gsapName: 'backgroundColor' },
-    'am-border-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_RADIUS, "0rem"), valueType: 'string', gsapName: 'borderRadius' },
-    'am-border-top-left-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_TOP_LEFT_RADIUS, "0rem"), valueType: 'string', gsapName: 'borderTopLeftRadius' },
-    'am-border-top-right-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_TOP_RIGHT_RADIUS, "0rem"), valueType: 'string', gsapName: 'borderTopRightRadius' },
-    'am-border-bottom-left-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_BOTTOM_LEFT_RADIUS, "0rem"), valueType: 'string', gsapName: 'borderBottomLeftRadius' },
-    'am-border-bottom-right-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_BOTTOM_RIGHT_RADIUS, "0rem"), valueType: 'string', gsapName: 'borderBottomRightRadius' },
-    'am-border-width': { value: getAttributeAsString(settingsElementProperties, BORDER_WIDTH, "0rem"), valueType: 'string', gsapName: 'borderWidth' },
-    'am-border-top-width': { value: getAttributeAsString(settingsElementProperties, BORDER_TOP_WIDTH, "0rem"), valueType: 'string', gsapName: 'borderTopWidth' },
-    'am-border-right-width': { value: getAttributeAsString(settingsElementProperties, BORDER_RIGHT_WIDTH, "0rem"), valueType: 'string', gsapName: 'borderRightWidth' },
-    'am-border-bottom-width': { value: getAttributeAsString(settingsElementProperties, BORDER_BOTTOM_WIDTH, "0rem"), valueType: 'string', gsapName: 'borderBottomWidth' },
-    'am-border-left-width': { value: getAttributeAsString(settingsElementProperties, BORDER_LEFT_WIDTH, "0rem"), valueType: 'string', gsapName: 'borderLeftWidth' },
-    'am-border-color': { value: getAttributeAsString(settingsElementProperties, BORDER_COLOR, "#000000"), valueType: 'string', gsapName: 'borderColor' },
-    'am-border-top-color': { value: getAttributeAsString(settingsElementProperties, BORDER_TOP_COLOR, "#000000"), valueType: 'string', gsapName: 'borderTopColor' },
-    'am-border-right-color': { value: getAttributeAsString(settingsElementProperties, BORDER_RIGHT_COLOR, "#000000"), valueType: 'string', gsapName: 'borderRightColor' },
-    'am-border-bottom-color': { value: getAttributeAsString(settingsElementProperties, BORDER_BOTTOM_COLOR, "#000000"), valueType: 'string', gsapName: 'borderBottomColor' },
-    'am-border-left-color': { value: getAttributeAsString(settingsElementProperties, BORDER_LEFT_COLOR, "#000000"), valueType: 'string', gsapName: 'borderLeftColor' },
-    'am-opacity': { value: getAttributeAsString(settingsElementProperties, OPACITY, "1"), valueType: 'string', gsapName: 'opacity' },
-    "am-position-x": { value: getAttributeAsString(settingsElementProperties, POSITION_X, "0rem"), valueType: 'string', gsapName: 'x' },
-    'am-position-y': { value: getAttributeAsString(settingsElementProperties, POSITION_Y, "0rem"), valueType: 'string', gsapName: 'y' },
-    'am-position-z': { value: getAttributeAsString(settingsElementProperties, POSITION_Z, "0rem"), valueType: 'string', gsapName: 'z' },
-    'am-rotation-x': { value: getAttributeAsString(settingsElementProperties, ROTATION_X, "0"), valueType: 'string', gsapName: 'rotationX' },
-    'am-rotation-y': { value: getAttributeAsString(settingsElementProperties, ROTATION_Y, "0"), valueType: 'string', gsapName: 'rotationY' },
-    'am-rotation-z': { value: getAttributeAsString(settingsElementProperties, ROTATION_Z, "0"), valueType: 'string', gsapName: 'rotationZ' },
-    'am-scale': { value: getAttributeAsString(settingsElementProperties, SCALE, "1"), valueType: 'string', gsapName: 'scale' },
-    'am-brightness': { value: getAttributeAsString(settingsElementProperties, BRIGHTNESS, "1"), valueType: 'string', gsapName: 'brightness' },
+let propertiesElement: VariablesProperties = {
+    'am-display': { value: getAttributeAsString(settingsElementProperties, DISPLAY, "block"), gsapName: 'display' },
+    'am-margin-left': { value: getAttributeAsString(settingsElementProperties, MARGIN_LEFT, "0rem"), gsapName: 'marginLeft' },
+    'am-margin-rigth': { value: getAttributeAsString(settingsElementProperties, MARGIN_RIGHT, "0rem"), gsapName: 'marginRight' },
+    'am-margin-top': { value: getAttributeAsString(settingsElementProperties, MARGIN_TOP, "0rem"), gsapName: 'marginTop' },
+    'am-margin-bottom': { value: getAttributeAsString(settingsElementProperties, MARGIN_BOTTOM, "0rem"), gsapName: 'marginBottom' },
+    'am-padding-left': { value: getAttributeAsString(settingsElementProperties, PADDING_LEFT, "0rem"), gsapName: 'paddingLeft' },
+    'am-padding-right': { value: getAttributeAsString(settingsElementProperties, PADDING_RIGHT, "0rem"), gsapName: 'paddingRight' },
+    'am-padding-top': { value: getAttributeAsString(settingsElementProperties, PADDING_TOP, "0rem"), gsapName: 'paddingTop' },
+    'am-padding-bottom': { value: getAttributeAsString(settingsElementProperties, PADDING_BOTTOM, "0rem"), gsapName: 'paddingBottom' },
+    'am-width': { value: getAttributeAsString(settingsElementProperties, WIDTH, "auto"), gsapName: 'width' },
+    'am-height': { value: getAttributeAsString(settingsElementProperties, HEIGHT, "auto"), gsapName: 'height' },
+    'am-left': { value: getAttributeAsString(settingsElementProperties, LEFT, "auto"), gsapName: 'left' },
+    'am-right': { value: getAttributeAsString(settingsElementProperties, RIGHT, "auto"), gsapName: 'right' },
+    'am-top': { value: getAttributeAsString(settingsElementProperties, TOP, "auto"), gsapName: 'top' },
+    'am-bottom': { value: getAttributeAsString(settingsElementProperties, BOTTOM, "auto"), gsapName: 'bottom' },
+    'am-color': { value: getAttributeAsString(settingsElementProperties, COLOR, "#000000"), gsapName: 'color' },
+    'am-background-color': { value: getAttributeAsString(settingsElementProperties, BACKGROUND_COLOR, "#000000"), gsapName: 'backgroundColor' },
+    'am-border-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_RADIUS, "0rem"), gsapName: 'borderRadius' },
+    'am-border-top-left-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_TOP_LEFT_RADIUS, "0rem"), gsapName: 'borderTopLeftRadius' },
+    'am-border-top-right-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_TOP_RIGHT_RADIUS, "0rem"), gsapName: 'borderTopRightRadius' },
+    'am-border-bottom-left-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_BOTTOM_LEFT_RADIUS, "0rem"), gsapName: 'borderBottomLeftRadius' },
+    'am-border-bottom-right-radius': { value: getAttributeAsString(settingsElementProperties, BORDER_BOTTOM_RIGHT_RADIUS, "0rem"), gsapName: 'borderBottomRightRadius' },
+    'am-border-width': { value: getAttributeAsString(settingsElementProperties, BORDER_WIDTH, "0rem"), gsapName: 'borderWidth' },
+    'am-border-top-width': { value: getAttributeAsString(settingsElementProperties, BORDER_TOP_WIDTH, "0rem"), gsapName: 'borderTopWidth' },
+    'am-border-right-width': { value: getAttributeAsString(settingsElementProperties, BORDER_RIGHT_WIDTH, "0rem"), gsapName: 'borderRightWidth' },
+    'am-border-bottom-width': { value: getAttributeAsString(settingsElementProperties, BORDER_BOTTOM_WIDTH, "0rem"), gsapName: 'borderBottomWidth' },
+    'am-border-left-width': { value: getAttributeAsString(settingsElementProperties, BORDER_LEFT_WIDTH, "0rem"), gsapName: 'borderLeftWidth' },
+    'am-border-color': { value: getAttributeAsString(settingsElementProperties, BORDER_COLOR, "#000000"), gsapName: 'borderColor' },
+    'am-border-top-color': { value: getAttributeAsString(settingsElementProperties, BORDER_TOP_COLOR, "#000000"), gsapName: 'borderTopColor' },
+    'am-border-right-color': { value: getAttributeAsString(settingsElementProperties, BORDER_RIGHT_COLOR, "#000000"), gsapName: 'borderRightColor' },
+    'am-border-bottom-color': { value: getAttributeAsString(settingsElementProperties, BORDER_BOTTOM_COLOR, "#000000"), gsapName: 'borderBottomColor' },
+    'am-border-left-color': { value: getAttributeAsString(settingsElementProperties, BORDER_LEFT_COLOR, "#000000"), gsapName: 'borderLeftColor' },
+    'am-opacity': { value: getAttributeAsString(settingsElementProperties, OPACITY, "1"), gsapName: 'opacity' },
+    "am-position-x": { value: getAttributeAsString(settingsElementProperties, POSITION_X, "0rem"), gsapName: 'x' },
+    'am-position-y': { value: getAttributeAsString(settingsElementProperties, POSITION_Y, "0rem"), gsapName: 'y' },
+    'am-position-z': { value: getAttributeAsString(settingsElementProperties, POSITION_Z, "0rem"), gsapName: 'z' },
+    'am-rotation-x': { value: getAttributeAsString(settingsElementProperties, ROTATION_X, "0"), gsapName: 'rotationX' },
+    'am-rotation-y': { value: getAttributeAsString(settingsElementProperties, ROTATION_Y, "0"), gsapName: 'rotationY' },
+    'am-rotation-z': { value: getAttributeAsString(settingsElementProperties, ROTATION_Z, "0"), gsapName: 'rotationZ' },
+    'am-scale': { value: getAttributeAsString(settingsElementProperties, SCALE, "1"), gsapName: 'scale' },
+    'am-brightness': { value: getAttributeAsString(settingsElementProperties, BRIGHTNESS, "1"), gsapName: 'brightness' },
 };
 
 /* ====================
@@ -202,9 +206,15 @@ Group Functions
 ==================== */
 function configurateGroup(group: Element, groupName: String = "") {
     return (groupVariables: Config = {}) => {
-        let attributesList;
-        if(groupName === "") {
-            attributesList = group.attributes;
+        let attributesList = group.attributes;
+        // If groupName is empty get the attributes from the element
+        if (groupName === "") {
+            // Remove all attributes that doesn't start with am-
+            for (let attribute of attributesList) {
+                if (!attribute.name.startsWith("am-")) {
+                    delete attributesList[attribute.name];
+                }
+            }
         }
         else {
             let groupSettings = document.querySelector(`[am-group-settings="${groupName}"]`)!;
@@ -230,6 +240,7 @@ function configurateGroup(group: Element, groupName: String = "") {
             }
         }
         // Check if the group has the basic variables and if doesn't apply the default values
+        if (!groupVariables.hasOwnProperty(TRIGGER)) { groupVariables[TRIGGER] = variablesGroup[TRIGGER].value; }
         if (!groupVariables.hasOwnProperty(MARKERS)) { groupVariables[MARKERS] = variablesGroup[MARKERS].value; }
         if (!groupVariables.hasOwnProperty(SCROLL_START)) { groupVariables[SCROLL_START] = variablesGroup[SCROLL_START].value; }
         if (!groupVariables.hasOwnProperty(SCROLL_END)) { groupVariables[SCROLL_END] = variablesGroup[SCROLL_END].value; }
@@ -241,16 +252,44 @@ function configurateGroup(group: Element, groupName: String = "") {
     }
 }
 
+function checkForGroupTrigger(group: Element, groupVariables: Config) {
+    if (!groupVariables.hasOwnProperty(GROUP_TARGET)) {
+        return [group];
+    }
+    else {
+        // First check if target has a value and if not return the group
+        if (groupVariables[GROUP_TARGET] === "") {
+            return [group];
+        }
+        else {
+            // Now check if there's a valid trigger for the same target
+            let triggerName = groupVariables[GROUP_TARGET];
+            let trigger = document.querySelectorAll(`[${GROUP_TRIGGER}="${triggerName}"]`);
+            if (trigger.length > 0) {
+                return Array.from(trigger);
+            }
+            else {
+                return [group];
+            }
+        }
+    }
+}
+
 /* ====================
 Element Functions
 ==================== */
 function configureElement(element: Element, animation: String) {
     return (elementProperties: Config = {}, elementVariables: Config = {}) => {
         // Create the config object
-        let attributesList;
+        let attributesList = element.attributes;
         // If animation is none get the attributes from the element
         if (animation === "none") {
-            attributesList = element.attributes;
+            // Remove all attributes that doesn't start with am-
+            for (let attribute of attributesList) {
+                if (!attribute.name.startsWith("am-")) {
+                    delete attributesList[attribute.name];
+                }
+            }
         }
         // If not get the attributes from the settings element
         else {
@@ -277,10 +316,17 @@ function configureElement(element: Element, animation: String) {
                 let varName = attribute.name.replace("am-var-", "");
                 elementProperties[varName] = attribute.value;
             }
+            // Check for the Set attributes
+            else if (attribute.name.startsWith("am-set-")) {
+                let varName = attribute.name.replace("am-set-", "am-");
+                if (propertiesElement.hasOwnProperty(varName)) {
+                    elementProperties["am-set-" + propertiesElement[varName].gsapName] = attribute.value;
+                }
+            }
             // Now check for the rest of the attributes
-            else if (attribute.name.startsWith("am-")) {
-                if (properties.hasOwnProperty(attribute.name)) {
-                    elementProperties[properties[attribute.name].gsapName] = attribute.value;
+            else {
+                if (propertiesElement.hasOwnProperty(attribute.name)) {
+                    elementProperties[propertiesElement[attribute.name].gsapName] = attribute.value;
                 }
                 else if (variablesElement.hasOwnProperty(attribute.name)) {
                     if (variablesElement[attribute.name].gsapName != '') {
@@ -293,26 +339,24 @@ function configureElement(element: Element, animation: String) {
             }
         }
 
-        // Check if the element has the basic variables and if doesn't apply the default values
+        // Check if the element has the mandatory variables and if doesn't apply the default values
         if (!elementVariables.hasOwnProperty('duration')) { elementVariables['duration'] = variablesElement[DURATION].value; }
         if (!elementVariables.hasOwnProperty('delay')) { elementVariables['delay'] = variablesElement[DELAY].value; }
         if (!elementVariables.hasOwnProperty('ease')) { elementVariables['ease'] = variablesElement[EASE].value; }
         if (!elementVariables.hasOwnProperty(TIMELINE_POSITION)) { elementVariables[TIMELINE_POSITION] = variablesElement[TIMELINE_POSITION].value; }
         if (!elementVariables.hasOwnProperty(TWEEN)) { elementVariables[TWEEN] = variablesElement[TWEEN].value; }
-        // 
-        if (!elementVariables.hasOwnProperty('staggerFrom')) { elementVariables['staggerFrom'] = variablesElement[STAGGER_FROM].value; }
     }
 }
 
 function getElementoToAnimate(element, elementVariables) {
     let elementToAnimate;
     let splitType: SplitType;
-    let splitInto = "elements"
-    if(elementVariables.hasOwnProperty(SPLIT_INTO)) {
+    let splitInto = ""
+    if (elementVariables.hasOwnProperty(SPLIT_INTO)) {
         splitInto = elementVariables[SPLIT_INTO];
     }
     // If split into doesn't exists return the element
-    if (!splitInto) { return element; }
+    if (splitInto == "") { return element; }
     // If it does return based on the value
     switch (splitInto) {
         case "lines":
@@ -344,7 +388,6 @@ function initializeGroups() {
     groups.forEach((group, groupIndex) => {
         // Groups
         if (group.hasAttribute("am-group-ready")) { return; }
-        let triggerType = group.getAttribute(TRIGGER) || "scroll";
         let groupName = group.getAttribute(GROUP) || "";
         let groupVariables = {};
         configurateGroup(group, groupName)(groupVariables);
@@ -383,22 +426,49 @@ function initializeGroups() {
             }
             // Add the timeline to the group timeline
             groupTl.add(elementTl, elementVariables[TIMELINE_POSITION]);
-            group.setAttribute(GROUP_READY, "true");
         });
 
-        switch (triggerType) {
+        // Set the group as ready
+        group.setAttribute(GROUP_READY, "true");
+        // Check if the group has a trigger
+        let groupTriggers: Element[] = []; // Usando um array para armazenar os elementos
+        groupTriggers = checkForGroupTrigger(group, groupVariables);
+
+        switch (groupVariables[TRIGGER]) {
             case "hover-in":
                 groupTl.pause();
-                group.addEventListener("mouseenter", () => { groupTl.play(); });
+                for (let trigger of groupTriggers) {
+                    trigger.addEventListener("mouseenter", () => { groupTl.play(); });
+                }
                 break;
             case "hover-in-out":
                 groupTl.pause();
-                group.addEventListener("mouseenter", () => { groupTl.play(); });
-                group.addEventListener("mouseleave", () => { groupTl.reverse(); });
+                for (let trigger of groupTriggers) {
+                    trigger.addEventListener("mouseenter", () => { groupTl.play(); });
+                    trigger.addEventListener("mouseleave", () => { groupTl.reverse(); });
+                }
                 break;
             case "click":
                 groupTl.pause();
-                group.addEventListener("click", () => { groupTl.play(); });
+                for (let trigger of groupTriggers) {
+                    trigger.addEventListener("click", () => { groupTl.play(); });
+                }
+                // groupTriggers.addEventListener("click", () => { groupTl.play(); });
+                break;
+            case "click-toggle":
+                groupTl.pause();
+                // If first click timeline will play, if second click timeline will reverse
+                let clickCount = 0;
+                for (let trigger of groupTriggers) {
+                    trigger.addEventListener("click", () => {
+                        clickCount++;
+                        if (clickCount % 2 === 1) {
+                            groupTl.play();
+                        } else {
+                            groupTl.reverse();
+                        }
+                    });
+                }
                 break;
             default:
                 let scrub;
@@ -409,7 +479,7 @@ function initializeGroups() {
                 }
                 let scrollTl = gsap.timeline({
                     scrollTrigger: {
-                        trigger: group,
+                        trigger: groupTriggers,
                         start: groupVariables[SCROLL_START],
                         end: groupVariables[SCROLL_END],
                         markers: groupVariables[MARKERS],
@@ -421,8 +491,8 @@ function initializeGroups() {
                 if (window.innerWidth > 991) {
                     // Now if the element has the pause on hover attribute
                     if (group.hasAttribute(HOVER_PAUSE) && group.getAttribute(HOVER_PAUSE) === 'true') {
-                        group.addEventListener("mouseenter", () => { scrollTl.pause(); });
-                        group.addEventListener("mouseleave", () => { scrollTl.play(); });
+                        groupTriggers.addEventListener("mouseenter", () => { scrollTl.pause(); });
+                        groupTriggers.addEventListener("mouseleave", () => { scrollTl.play(); });
                     }
                 }
                 scrollTl.add(groupTl);
