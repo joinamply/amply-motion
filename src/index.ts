@@ -118,7 +118,7 @@ Variables & Properties
 ==================== */
 // Variables
 const settingsGroupVariables = document.querySelector('[am-settings="group-variables"]')!;
-let variablesGroup: VariablesProperties = {
+let groupVariablesReference: VariablesProperties = {
     'am-markers': { value: getAttributeAsBoolean(settingsGroupVariables, MARKERS, false), gsapName: '' },
     'am-scroll-start': { value: getAttributeAsString(settingsGroupVariables, SCROLL_START, "top 20%"), gsapName: '' },
     'am-scroll-end': { value: getAttributeAsString(settingsGroupVariables, SCROLL_END, "bottom 80%"), gsapName: '' },
@@ -133,7 +133,7 @@ let variablesGroup: VariablesProperties = {
     'am-trigger': { value: getAttributeAsString(settingsGroupVariables, TRIGGER, "scroll"), gsapName: '' },
 };
 const settingsElementVariables = document.querySelector('[am-settings="element-variables"]')!;
-let variablesElement: VariablesProperties = {
+let elementVariablesReference: VariablesProperties = {
     // Gsap
     'am-delay': { value: getAttributeAsFloat(settingsElementVariables, DELAY, 0), gsapName: 'delay' },
     'am-duration': { value: getAttributeAsFloat(settingsElementVariables, DURATION, 1), gsapName: 'duration' },
@@ -161,7 +161,7 @@ let variablesElement: VariablesProperties = {
 };
 // Properties
 const settingsElementProperties = document.querySelector('[am-settings="element-properties"]')!;
-let propertiesElement: VariablesProperties = {
+let elementPropertiesReference: VariablesProperties = {
     'am-display': { value: getAttributeAsString(settingsElementProperties, DISPLAY, "block"), gsapName: 'display' },
     'am-margin-left': { value: getAttributeAsString(settingsElementProperties, MARGIN_LEFT, "0rem"), gsapName: 'marginLeft' },
     'am-margin-rigth': { value: getAttributeAsString(settingsElementProperties, MARGIN_RIGHT, "0rem"), gsapName: 'marginRight' },
@@ -213,51 +213,57 @@ let propertiesElement: VariablesProperties = {
 Group Functions
 ==================== */
 function configurateGroup(group: Element, groupName: String = "") {
-    return (groupVariables: Config = {}) => {
-        let attributesList = group.attributes;
-        // If groupName is empty get the attributes from the element
-        if (groupName === "") {
-            // Remove all attributes that doesn't start with am-
-            for (let attribute of attributesList) {
-                if (!attribute.name.startsWith("am-")) {
-                    delete attributesList[attribute.name];
-                }
-            }
+    let groupVariables: Config = {};
+    let attributesFromElement = Array.from(group.attributes);
+    let attributesFromSettings: Array<Attr> = [];
+    let attributesList: Array<Attr> = [];
+    if (groupName !== "") {
+        let settings = document.querySelector(`[am-group-settings="${groupName}"]`)!;
+        // Check if the settings element exists
+        if (settings) {
+            attributesFromSettings = Array.from(settings.attributes);
         }
+        // If not continue with settings from the element
         else {
-            let groupSettings = document.querySelector(`[am-group-settings="${groupName}"]`)!;
-            // Check if the settings element exists
-            if (!groupSettings) {
-                console.log(`Settings element not found for group: ${groupName}`);
-                return;
-            }
-            attributesList = groupSettings.attributes;
-            // Now grab the attributes from the element 
-            let groupAttributes = group.attributes;
-            // Now do a check and override the one from the settings to the one from the element
-            for (let attribute of groupAttributes) {
-                if (attributesList.hasOwnProperty(attribute.name)) {
-                    attributesList[attribute.name].value = attribute.value;
-                }
-            }
+            console.log(`Settings element not found for group: ${groupName}`);
         }
-        // Loop through the attributes and get the values
-        for (let attribute of attributesList) {
-            if (variablesGroup.hasOwnProperty(attribute.name)) {
-                groupVariables[attribute.name] = attribute.value;
-            }
-        }
-        // Check if the group has the basic variables and if doesn't apply the default values
-        if (!groupVariables.hasOwnProperty(TRIGGER)) { groupVariables[TRIGGER] = variablesGroup[TRIGGER].value; }
-        if (!groupVariables.hasOwnProperty(MARKERS)) { groupVariables[MARKERS] = variablesGroup[MARKERS].value; }
-        if (!groupVariables.hasOwnProperty(SCROLL_START)) { groupVariables[SCROLL_START] = variablesGroup[SCROLL_START].value; }
-        if (!groupVariables.hasOwnProperty(SCROLL_END)) { groupVariables[SCROLL_END] = variablesGroup[SCROLL_END].value; }
-        if (!groupVariables.hasOwnProperty(TOGGLE_ACTIONS)) { groupVariables[TOGGLE_ACTIONS] = variablesGroup[TOGGLE_ACTIONS].value; }
-        if (!groupVariables.hasOwnProperty(REPEAT)) { groupVariables[REPEAT] = variablesGroup[REPEAT].value; }
-        if (!groupVariables.hasOwnProperty(REPEAT_DELAY)) { groupVariables[REPEAT_DELAY] = variablesGroup[REPEAT_DELAY].value; }
-        if (!groupVariables.hasOwnProperty(YOYO)) { groupVariables[YOYO] = variablesGroup[YOYO].value; }
-        if (!groupVariables.hasOwnProperty(HOVER_PAUSE)) { groupVariables[HOVER_PAUSE] = variablesGroup[HOVER_PAUSE].value; }
     }
+    // Add the attributes from the settings
+    for (let attribute of attributesFromSettings) {
+        if (attribute.name.startsWith("am-")) {
+            attributesList.push(attribute);
+        }
+    }
+    // Add the attributes from the element and update the ones that are already in the list
+    for (let attribute of attributesFromElement) {
+        if (attribute.name.startsWith("am-")) {
+            if (attributesList.includes(attribute)) {
+                let index = attributesList.indexOf(attribute);
+                attributesList[index] = attribute;
+            }
+            else {
+                attributesList.push(attribute);
+            }
+        }
+    }
+    // Loop through the attributes and get the values
+    for (let attribute of attributesList) {
+        if (groupVariablesReference.hasOwnProperty(attribute.name)) {
+            groupVariables[attribute.name] = attribute.value;
+        }
+    }
+    // Check if the group has the basic variables and if doesn't apply the default values
+    if (!groupVariables.hasOwnProperty(TRIGGER)) { groupVariables[TRIGGER] = groupVariablesReference[TRIGGER].value; }
+    if (!groupVariables.hasOwnProperty(MARKERS)) { groupVariables[MARKERS] = groupVariablesReference[MARKERS].value; }
+    if (!groupVariables.hasOwnProperty(SCROLL_START)) { groupVariables[SCROLL_START] = groupVariablesReference[SCROLL_START].value; }
+    if (!groupVariables.hasOwnProperty(SCROLL_END)) { groupVariables[SCROLL_END] = groupVariablesReference[SCROLL_END].value; }
+    if (!groupVariables.hasOwnProperty(TOGGLE_ACTIONS)) { groupVariables[TOGGLE_ACTIONS] = groupVariablesReference[TOGGLE_ACTIONS].value; }
+    if (!groupVariables.hasOwnProperty(REPEAT)) { groupVariables[REPEAT] = groupVariablesReference[REPEAT].value; }
+    if (!groupVariables.hasOwnProperty(REPEAT_DELAY)) { groupVariables[REPEAT_DELAY] = groupVariablesReference[REPEAT_DELAY].value; }
+    if (!groupVariables.hasOwnProperty(YOYO)) { groupVariables[YOYO] = groupVariablesReference[YOYO].value; }
+    if (!groupVariables.hasOwnProperty(HOVER_PAUSE)) { groupVariables[HOVER_PAUSE] = groupVariablesReference[HOVER_PAUSE].value; }
+
+    return groupVariables;
 }
 
 function checkForGroupTrigger(group: Element, groupVariables: Config) {
@@ -287,73 +293,77 @@ function checkForGroupTrigger(group: Element, groupVariables: Config) {
 Element Functions
 ==================== */
 function configureElement(element: Element, animation: String) {
-    return (elementProperties: Config = {}, elementVariables: Config = {}) => {
-        // Create the config object
-        let attributesList = element.attributes;
-        // If animation is none get the attributes from the element
-        if (animation === "none") {
-            // Remove all attributes that doesn't start with am-
-            for (let attribute of attributesList) {
-                if (!attribute.name.startsWith("am-")) {
-                    delete attributesList[attribute.name];
-                }
-            }
+    let elementProperties: Config = {};
+    let elementVariables: Config = {};
+    let attributesFromElement = Array.from(element.attributes);
+    let attributesFromSettings: Array<Attr> = [];
+    let attributesList: Array<Attr> = [];
+    // If element has attributes inside settings
+    if (animation !== "none") {
+        let settings = document.querySelector(`[am-element-settings="${animation}"]`)!;
+        // Check if the settings exists
+        if (settings) {
+            attributesFromSettings = Array.from(settings.attributes);
         }
-        // If not get the attributes from the settings element
+        // If not continue with settings from the element
         else {
-            let elementSettings = document.querySelector(`[am-element-settings="${animation}"]`)!;
-            // Check if the settings element exists
-            if (!elementSettings) {
-                console.log(`Settings element not found for animation: ${animation}`);
-                return;
-            }
-            attributesList = elementSettings.attributes;
-            // Now grab the attributes from the element 
-            let elementAttributes = element.attributes;
-            // Now do a check and override the one from the settings to the one from the element
-            for (let attribute of elementAttributes) {
-                if (attributesList.hasOwnProperty(attribute.name)) {
-                    attributesList[attribute.name].value = attribute.value;
-                }
-            }
+            console.log(`Settings element not found for animation: ${animation}`);
         }
-        // Loop through the attributes and get the values
-        for (let attribute of attributesList) {
-            // First check for atributtes to animate css variables
-            if (attribute.name.startsWith("am-var-")) {
-                let varName = attribute.name.replace("am-var-", "");
-                elementProperties[varName] = attribute.value;
-            }
-            // Check for the Set attributes
-            else if (attribute.name.startsWith("am-set-")) {
-                let varName = attribute.name.replace("am-set-", "am-");
-                if (propertiesElement.hasOwnProperty(varName)) {
-                    elementProperties["am-set-" + propertiesElement[varName].gsapName] = attribute.value;
-                }
-            }
-            // Now check for the rest of the attributes
-            else {
-                if (propertiesElement.hasOwnProperty(attribute.name)) {
-                    elementProperties[propertiesElement[attribute.name].gsapName] = attribute.value;
-                }
-                else if (variablesElement.hasOwnProperty(attribute.name)) {
-                    if (variablesElement[attribute.name].gsapName != '') {
-                        elementVariables[variablesElement[attribute.name].gsapName] = attribute.value;
-                    }
-                    else {
-                        elementVariables[attribute.name] = attribute.value;
-                    }
-                }
-            }
-        }
-
-        // Check if the element has the mandatory variables and if doesn't apply the default values
-        if (!elementVariables.hasOwnProperty('duration')) { elementVariables['duration'] = variablesElement[DURATION].value; }
-        if (!elementVariables.hasOwnProperty('delay')) { elementVariables['delay'] = variablesElement[DELAY].value; }
-        if (!elementVariables.hasOwnProperty('ease')) { elementVariables['ease'] = variablesElement[EASE].value; }
-        if (!elementVariables.hasOwnProperty(TIMELINE_POSITION)) { elementVariables[TIMELINE_POSITION] = variablesElement[TIMELINE_POSITION].value; }
-        if (!elementVariables.hasOwnProperty(TWEEN)) { elementVariables[TWEEN] = variablesElement[TWEEN].value; }
     }
+    // Add the attributes from the settings
+    for (let attribute of attributesFromSettings) {
+        if (attribute.name.startsWith("am-")) {
+            attributesList.push(attribute);
+        }
+    }
+    // Add the attributes from the element and update the ones that are already in the list
+    for (let attribute of attributesFromElement) {
+        if (attribute.name.startsWith("am-")) {
+            if (attributesList.includes(attribute)) {
+                let index = attributesList.indexOf(attribute);
+                attributesList[index] = attribute;
+            }
+            else {
+                attributesList.push(attribute);
+            }
+        }
+    }
+    // Loop through the attributes and get the values
+    for (let attribute of attributesList) {
+        // First check for atributtes to animate css variables
+        if (attribute.name.startsWith("am-var-")) {
+            let varName = attribute.name.replace("am-var-", "");
+            elementProperties[varName] = attribute.value;
+        }
+        // Check for the Set attributes
+        else if (attribute.name.startsWith("am-set-")) {
+            let varName = attribute.name.replace("am-set-", "am-");
+            if (elementPropertiesReference.hasOwnProperty(varName)) {
+                elementProperties["am-set-" + elementPropertiesReference[varName].gsapName] = attribute.value;
+            }
+        }
+        // Now check for the rest of the attributes
+        else {
+            if (elementPropertiesReference.hasOwnProperty(attribute.name)) {
+                elementProperties[elementPropertiesReference[attribute.name].gsapName] = attribute.value;
+            } else if (elementVariablesReference.hasOwnProperty(attribute.name)) {
+                if (elementVariablesReference[attribute.name].gsapName != '') {
+                    elementVariables[elementVariablesReference[attribute.name].gsapName] = attribute.value;
+                }
+                else {
+                    elementVariables[attribute.name] = attribute.value;
+                }
+            }
+        }
+    }
+
+    // Check if the element has the mandatory variables and if doesn't apply the default values
+    if (!elementVariables.hasOwnProperty('duration')) { elementVariables['duration'] = elementVariablesReference[DURATION].value; }
+    if (!elementVariables.hasOwnProperty('delay')) { elementVariables['delay'] = elementVariablesReference[DELAY].value; }
+    if (!elementVariables.hasOwnProperty('ease')) { elementVariables['ease'] = elementVariablesReference[EASE].value; }
+    if (!elementVariables.hasOwnProperty(TIMELINE_POSITION)) { elementVariables[TIMELINE_POSITION] = elementVariablesReference[TIMELINE_POSITION].value; }
+    if (!elementVariables.hasOwnProperty(TWEEN)) { elementVariables[TWEEN] = elementVariablesReference[TWEEN].value; }
+    return { elementProperties, elementVariables };
 }
 
 function getElementoToAnimate(element, elementVariables) {
@@ -397,17 +407,16 @@ function initializeGroups() {
         // Groups
         if (group.hasAttribute("am-group-ready")) { return; }
         let groupName = group.getAttribute(GROUP) || "";
-        let groupVariables = {};
-        configurateGroup(group, groupName)(groupVariables);
+        let groupVariables = configurateGroup(group, groupName);
         // Creates the group timeline
-        let groupTl = gsap.timeline({ repeat: groupVariables[REPEAT], repeatDelay: groupVariables[REPEAT_DELAY], yoyo: groupVariables[YOYO] });
+        let groupTl = gsap.timeline();
 
         // Elements
         let elements: Element[] = Array.from(group.querySelectorAll(`[${ELEMENT}]`));
         // Sort the elements by their order attribute
         elements = Array.from(elements).sort((a, b) => {
-            let aOrder = parseFloat(a.getAttribute(ELEMENT_ORDER) || variablesElement[ELEMENT_ORDER].value);
-            let bOrder = parseFloat(b.getAttribute(ELEMENT_ORDER) || variablesElement[ELEMENT_ORDER].value);
+            let aOrder = parseFloat(a.getAttribute(ELEMENT_ORDER) || elementVariablesReference[ELEMENT_ORDER].value);
+            let bOrder = parseFloat(b.getAttribute(ELEMENT_ORDER) || elementVariablesReference[ELEMENT_ORDER].value);
             return aOrder - bOrder;
         });
 
@@ -418,9 +427,8 @@ function initializeGroups() {
             if (!element.hasAttribute("id")) { element.setAttribute("id", `group-${groupIndex}-el-${elementIndex}`); }
             // Get the type of animation and...
             let animType = getAttributeAsString(element, ELEMENT, "none");
-            let elementProperties = {};
-            let elementVariables = {};
-            configureElement(element, animType)(elementProperties, elementVariables);
+            // Get the element properties and variables
+            let { elementProperties, elementVariables } = configureElement(element, animType);
             let elementToAnimate = getElementoToAnimate(element, elementVariables);
             // Create the timeline
             elementTl = setElementTimeline(elementToAnimate, animType, elementProperties, elementVariables, elementVariables[TWEEN]);
@@ -436,6 +444,10 @@ function initializeGroups() {
             groupTl.add(elementTl, elementVariables[TIMELINE_POSITION]);
         });
 
+        groupTl.repeat(parseFloat(groupVariables[REPEAT]));
+        groupTl.repeatDelay(parseFloat(groupVariables[REPEAT_DELAY]));
+        groupTl.yoyo(groupVariables[YOYO]);
+
         // Set the group as ready
         group.setAttribute(GROUP_READY, "true");
         // Check if the group has a trigger
@@ -446,7 +458,7 @@ function initializeGroups() {
             case "hover-in":
                 groupTl.pause();
                 for (let trigger of groupTriggers) {
-                    trigger.addEventListener("mouseenter", () => { groupTl.play(); });
+                    trigger.addEventListener("mouseenter", () => { groupTl.restart(); });
                 }
                 break;
             case "hover-in-out":
@@ -459,7 +471,7 @@ function initializeGroups() {
             case "click":
                 groupTl.pause();
                 for (let trigger of groupTriggers) {
-                    trigger.addEventListener("click", () => { groupTl.play(); });
+                    trigger.addEventListener("click", () => { groupTl.restart(); console.log(groupVariables[REPEAT]);});
                 }
                 break;
             case "click-toggle":
