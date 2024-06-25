@@ -458,6 +458,12 @@ function initializeGroups() {
             case "hover-in":
                 groupTl.pause();
                 for (let trigger of groupTriggers) {
+                    trigger.addEventListener("mouseenter", () => { groupTl.play(); });
+                }
+                break;
+            case "hover-in-restart":
+                groupTl.pause();
+                for (let trigger of groupTriggers) {
                     trigger.addEventListener("mouseenter", () => { groupTl.restart(); });
                 }
                 break;
@@ -471,7 +477,12 @@ function initializeGroups() {
             case "click":
                 groupTl.pause();
                 for (let trigger of groupTriggers) {
-                    trigger.addEventListener("click", () => { groupTl.restart(); console.log(groupVariables[REPEAT]);});
+                    trigger.addEventListener("click", () => { groupTl.play(); console.log(groupVariables[REPEAT]); });
+                }
+            case "click-restart":
+                groupTl.pause();
+                for (let trigger of groupTriggers) {
+                    trigger.addEventListener("click", () => { groupTl.restart(); console.log(groupVariables[REPEAT]); });
                 }
                 break;
             case "click-toggle":
