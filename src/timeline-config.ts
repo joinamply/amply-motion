@@ -60,6 +60,19 @@ export function setElementTimeline(element, animType: string, elementProperties:
             marqueeTl.repeat(elementVariables.repeat);
             tl.add(marqueeTl);
             break;
+        case "counter":
+                let counterTl = gsap.timeline({ease: elementVariables["ease"]});
+                counterTl.duration(elementVariables["duration"]);
+                counterTl.repeat(elementVariables["repeat"]);
+                counterTl.repeatDelay(parseFloat(elementVariables["repeatDelay"]));
+                counterTl.yoyo(elementVariables["yoyo"]);
+
+                if(elementVariables.hasOwnProperty("countStart") && elementVariables["countStart"] !== "inherit") {
+                    element.innerText = elementVariables["countStart"];
+                }
+                
+                tl[tween](element, elementVariables, 0);
+            break;
         default:
             // Change the element if the target is specified and remove the reference from the properties
             if (elementProperties.hasOwnProperty("target")) {
@@ -88,11 +101,10 @@ export function setElementTimeline(element, animType: string, elementProperties:
                 gsap.set(element, { filter: 'brightness(1)', webkitFilter: 'brightness(1)' });
                 finalProperties["filter"] = `brightness(${value})`;
                 finalProperties["webkitFilter"] = `brightness(${value})`;
-                
             }
             // Check for stagger properties
-            if(finalProperties.hasOwnProperty("staggerAmount")) {
-                finalProperties["stagger"] = { amount: finalProperties["staggerAmount"], from: finalProperties["staggerFrom"]};
+            if (finalProperties.hasOwnProperty("staggerAmount")) {
+                finalProperties["stagger"] = { amount: finalProperties["staggerAmount"], from: finalProperties["staggerFrom"] };
             }
             // Remove properties that are not needed
             delete finalProperties["brightness"];
@@ -102,6 +114,6 @@ export function setElementTimeline(element, animType: string, elementProperties:
             tl[tween](element, finalProperties, 0);
             break;
     }
-    
+
     return tl;
 }

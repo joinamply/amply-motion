@@ -2,6 +2,7 @@ import SplitType from "split-type";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
+import { RoughEase } from "gsap/EasePack";
 
 import { setElementTimeline } from './timeline-config';
 import { getAttributeAsBoolean, getAttributeAsFloat, getAttributeAsString } from './utils';
@@ -48,6 +49,7 @@ const YOYO = "am-yoyo";
 const HOVER_PAUSE = "am-hover-pause";
 // Counter
 const COUNT_TO = "am-count-to";
+const COUNT_START = "am-count-start";
 const COUNT_STEPS = "am-count-steps";
 const SEPARATOR = "am-separator";
 // Typewriter
@@ -152,6 +154,7 @@ let elementVariablesReference: VariablesProperties = {
     'am-hover-pause': { value: getAttributeAsBoolean(settingsGroupVariables, HOVER_PAUSE, false), gsapName: '' },
     // Counter
     'am-count-to': { value: getAttributeAsFloat(settingsElementVariables, COUNT_TO, 0), gsapName: 'end' },
+    'am-count-start': { value: getAttributeAsFloat(settingsElementVariables, COUNT_START, 0), gsapName: 'countStart' },
     'am-count-steps': { value: getAttributeAsFloat(settingsElementVariables, COUNT_STEPS, 1), gsapName: 'increment' },
     'am-separator': { value: getAttributeAsString(settingsElementVariables, SEPARATOR, ","), gsapName: 'separator' },
     // Typewriter
@@ -225,7 +228,7 @@ function configurateGroup(group: Element, groupName: String = "") {
         }
         // If not continue with settings from the element
         else {
-            console.log(`Settings element not found for group: ${groupName}`);
+            console.log(`Settings element not found for group: ${groupName} for element: ${group.id}`);
         }
     }
     // Add the attributes from the settings
@@ -307,7 +310,7 @@ function configureElement(element: Element, animation: String) {
         }
         // If not continue with settings from the element
         else {
-            console.log(`Settings element not found for animation: ${animation}`);
+            console.log(`Settings element not found for animation: ${animation} for element: ${element.id}`);
         }
     }
     // Add the attributes from the settings
