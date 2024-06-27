@@ -21,8 +21,6 @@ Naming
 ==================== */
 // Variables - Group
 const GROUP = 'am-group';
-const ELEMENT = 'am-element';
-const ELEMENT_ORDER = 'am-element-order';
 const GROUP_READY = 'am-group-ready';
 const MARKERS = "am-markers";
 const SCROLL_START = "am-scroll-start";
@@ -32,6 +30,9 @@ const TRIGGER = "am-trigger";
 const GROUP_TRIGGER = "am-group-trigger";
 const GROUP_TARGET = "am-group-target";
 // Variables - Element
+const ELEMENT = 'am-element';
+const ELEMENT_READY = 'am-element-ready';
+const ELEMENT_ORDER = 'am-element-order';
 const DELAY = "am-delay";
 const DURATION = "am-duration";
 const STAGGER_AMOUNT = "am-stagger-amount";
@@ -405,9 +406,8 @@ Start the animations
 ==================== */
 function initializeGroups() {
     let groups = document.querySelectorAll(`[${GROUP}]`);
-
-    groups.forEach((group, groupIndex) => {
-        // Groups
+    for (let groupIndex = groups.length - 1; groupIndex >= 0; groupIndex--) {
+        let group = groups[groupIndex];
         if (group.hasAttribute("am-group-ready")) { return; }
         let groupName = group.getAttribute(GROUP) || "";
         let groupVariables = configurateGroup(group, groupName);
@@ -425,6 +425,7 @@ function initializeGroups() {
 
         // Loop through the elements and create the animations
         elements.forEach((element, elementIndex) => {
+            if(element.hasAttribute("am-element-ready")) { return; }
             let elementTl = gsap.timeline();
             // Check if the element has an id applied and if not, apply one
             if (!element.hasAttribute("id")) { element.setAttribute("id", `group-${groupIndex}-el-${elementIndex}`); }
@@ -445,6 +446,8 @@ function initializeGroups() {
             }
             // Add the timeline to the group timeline
             groupTl.add(elementTl, elementVariables[TIMELINE_POSITION]);
+            // Set the element as ready
+            element.setAttribute(ELEMENT_READY, "true");
         });
 
         groupTl.repeat(parseFloat(groupVariables[REPEAT]));
@@ -535,7 +538,7 @@ function initializeGroups() {
         }
         // Reset the group opacity back to 1
         gsap.set(group, { opacity: 1 });
-    });
+    }
 }
 
 initializeGroups();
