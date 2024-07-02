@@ -29,6 +29,8 @@ const TOGGLE_ACTIONS = "am-toggle-actions";
 const TRIGGER = "am-trigger";
 const GROUP_TRIGGER = "am-group-trigger";
 const GROUP_TARGET = "am-group-target";
+const PLAY_BREAKPOINT = "am-play-breakpoint";
+const STOP_BREAKPOINT = "am-stop-breakpoint";
 // Variables - Element
 const ELEMENT = 'am-element';
 const ELEMENT_READY = 'am-element-ready';
@@ -134,6 +136,8 @@ let groupVariablesReference: VariablesProperties = {
     'am-group-trigger': { value: getAttributeAsString(settingsGroupVariables, GROUP_TRIGGER, "scroll"), gsapName: '' },
     'am-group-target': { value: getAttributeAsString(settingsGroupVariables, GROUP_TARGET, ""), gsapName: '' },
     'am-trigger': { value: getAttributeAsString(settingsGroupVariables, TRIGGER, "scroll"), gsapName: '' },
+    'am-play-breakpoint': { value: getAttributeAsString(settingsGroupVariables, PLAY_BREAKPOINT, ""), gsapName: '' },
+    'am-stop-breakpoint': { value: getAttributeAsString(settingsGroupVariables, STOP_BREAKPOINT, ""), gsapName: '' },
 };
 const settingsElementVariables = document.querySelector('[am-settings="element-variables"]')!;
 let elementVariablesReference: VariablesProperties = {
@@ -266,6 +270,8 @@ function configurateGroup(group: Element, groupName: String = "") {
     if (!groupVariables.hasOwnProperty(REPEAT_DELAY)) { groupVariables[REPEAT_DELAY] = groupVariablesReference[REPEAT_DELAY].value; }
     if (!groupVariables.hasOwnProperty(YOYO)) { groupVariables[YOYO] = groupVariablesReference[YOYO].value; }
     if (!groupVariables.hasOwnProperty(HOVER_PAUSE)) { groupVariables[HOVER_PAUSE] = groupVariablesReference[HOVER_PAUSE].value; }
+    if (!groupVariables.hasOwnProperty(PLAY_BREAKPOINT)) { groupVariables[PLAY_BREAKPOINT] = groupVariablesReference[PLAY_BREAKPOINT].value; }
+    if (!groupVariables.hasOwnProperty(STOP_BREAKPOINT)) { groupVariables[STOP_BREAKPOINT] = groupVariablesReference[STOP_BREAKPOINT].value; }
 
     return groupVariables;
 }
@@ -460,84 +466,113 @@ function initializeGroups() {
         let groupTriggers: Element[] = []; // Usando um array para armazenar os elementos
         groupTriggers = checkForGroupTrigger(group, groupVariables);
 
-        switch (groupVariables[TRIGGER]) {
-            case "hover-in":
-                groupTl.pause();
-                for (let trigger of groupTriggers) {
-                    trigger.addEventListener("mouseenter", () => { groupTl.play(); });
-                }
-                break;
-            case "hover-in-restart":
-                groupTl.pause();
-                for (let trigger of groupTriggers) {
-                    trigger.addEventListener("mouseenter", () => { groupTl.restart(); });
-                }
-                break;
-            case "hover-in-out":
-                groupTl.pause();
-                for (let trigger of groupTriggers) {
-                    trigger.addEventListener("mouseenter", () => { groupTl.play(); });
-                    trigger.addEventListener("mouseleave", () => { groupTl.reverse(); });
-                }
-                break;
-            case "click":
-                groupTl.pause();
-                for (let trigger of groupTriggers) {
-                    trigger.addEventListener("click", () => { groupTl.play(); console.log(groupVariables[REPEAT]); });
-                }
-            case "click-restart":
-                groupTl.pause();
-                for (let trigger of groupTriggers) {
-                    trigger.addEventListener("click", () => { groupTl.restart(); console.log(groupVariables[REPEAT]); });
-                }
-                break;
-            case "click-toggle":
-                groupTl.pause();
-                // If first click timeline will play, if second click timeline will reverse
-                let clickCount = 0;
-                for (let trigger of groupTriggers) {
-                    trigger.addEventListener("click", () => {
-                        clickCount++;
-                        if (clickCount % 2 === 1) {
-                            groupTl.play();
-                        } else {
-                            groupTl.reverse();
-                        }
-                    });
-                }
-                break;
-            default:
-                let scrub;
-                if (groupVariables.hasOwnProperty(SCRUB)) {
-                    scrub = groupVariables[SCRUB];
-                    if (scrub === "true") { scrub = true; }
-                    else { scrub = parseFloat(groupVariables[SCRUB] as string); }
-                }
-                let scrollTl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: groupTriggers,
-                        start: groupVariables[SCROLL_START],
-                        end: groupVariables[SCROLL_END],
-                        markers: groupVariables[MARKERS],
-                        scrub: scrub,
-                        toggleActions: scrub !== false ? groupVariables[TOGGLE_ACTIONS] : "play none none reverse"
-                    }
+        // Match Media
+        if(groupVariables[PLAY_BREAKPOINT] !== "") {
+            let playMM = gsap.matchMedia();
+            groupTl.pause();
+            playMM.add(`(max-width: ${groupVariables[PLAY_BREAKPOINT]})`, () => {
+                groupTl.play();
+                createGroupTrigger(groupTl, groupVariables[TRIGGER], groupTriggers, groupVariables, group);
+                return () => { 
+                    groupTl.restart();
+                    groupTl.pause();
+                  };
+            });
+        }
+        else {
+            createGroupTrigger(groupTl, groupVariables[TRIGGER], groupTriggers, groupVariables, group);
+            if(groupVariables[STOP_BREAKPOINT] !== "") {
+                let stopMM = gsap.matchMedia();
+                stopMM.add(`(max-width: ${groupVariables[STOP_BREAKPOINT]})`, () => {
+                    groupTl.restart();
+                    groupTl.pause();
+                    return () => { 
+                        groupTl.play();
+                      };
                 });
-                // Check if screen width is above 991 pixels
-                if (window.innerWidth > 991) {
-                    // Now if the element has the pause on hover attribute
-                    if (group.hasAttribute(HOVER_PAUSE) && group.getAttribute(HOVER_PAUSE) === 'true') {
-                        for (let trigger of groupTriggers) {
-                            trigger.addEventListener("mouseenter", () => { scrollTl.pause(); });
-                            trigger.addEventListener("mouseleave", () => { scrollTl.play(); });
-                        }
-                    }
-                }
-                scrollTl.add(groupTl);
-                break;
+            }
         }
         // Reset the group opacity back to 1
         gsap.set(group, { opacity: 1 });
+    }
+}
+
+function createGroupTrigger(groupTl, trigger, groupTriggers, groupVariables, group) {
+    switch (trigger) {
+        case "hover-in":
+            groupTl.pause();
+            for (let trigger of groupTriggers) {
+                trigger.addEventListener("mouseenter", () => { groupTl.play(); });
+            }
+            break;
+        case "hover-in-restart":
+            groupTl.pause();
+            for (let trigger of groupTriggers) {
+                trigger.addEventListener("mouseenter", () => { groupTl.restart(); });
+            }
+            break;
+        case "hover-in-out":
+            groupTl.pause();
+            for (let trigger of groupTriggers) {
+                trigger.addEventListener("mouseenter", () => { groupTl.play(); });
+                trigger.addEventListener("mouseleave", () => { groupTl.reverse(); });
+            }
+            break;
+        case "click":
+            groupTl.pause();
+            for (let trigger of groupTriggers) {
+                trigger.addEventListener("click", () => { groupTl.play(); console.log(groupVariables[REPEAT]); });
+            }
+        case "click-restart":
+            groupTl.pause();
+            for (let trigger of groupTriggers) {
+                trigger.addEventListener("click", () => { groupTl.restart(); console.log(groupVariables[REPEAT]); });
+            }
+            break;
+        case "click-toggle":
+            groupTl.pause();
+            // If first click timeline will play, if second click timeline will reverse
+            let clickCount = 0;
+            for (let trigger of groupTriggers) {
+                trigger.addEventListener("click", () => {
+                    clickCount++;
+                    if (clickCount % 2 === 1) {
+                        groupTl.play();
+                    } else {
+                        groupTl.reverse();
+                    }
+                });
+            }
+            break;
+        default:
+            let scrub;
+            if (groupVariables.hasOwnProperty(SCRUB)) {
+                scrub = groupVariables[SCRUB];
+                if (scrub === "true") { scrub = true; }
+                else { scrub = parseFloat(groupVariables[SCRUB] as string); }
+            }
+            let scrollTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: groupTriggers,
+                    start: groupVariables[SCROLL_START],
+                    end: groupVariables[SCROLL_END],
+                    markers: groupVariables[MARKERS],
+                    scrub: scrub,
+                    toggleActions: scrub !== false ? groupVariables[TOGGLE_ACTIONS] : "play none none reverse"
+                }
+            });
+            // Check if screen width is above 991 pixels
+            if (window.innerWidth > 991) {
+                // Now if the element has the pause on hover attribute
+                if (group.hasAttribute(HOVER_PAUSE) && group.getAttribute(HOVER_PAUSE) === 'true') {
+                    for (let trigger of groupTriggers) {
+                        trigger.addEventListener("mouseenter", () => { scrollTl.pause(); });
+                        trigger.addEventListener("mouseleave", () => { scrollTl.play(); });
+                    }
+                }
+            }
+            scrollTl.add(groupTl);
+            break;
     }
 }
 
