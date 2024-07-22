@@ -72,6 +72,7 @@ export function setElementTimeline(element, animType: string, elementProperties:
                 }
 
                 if(elementVariables.hasOwnProperty("end") && elementVariables["end"] == "inherit") {
+                    console.log("Inheriting end value:" + elementVariables["end"]);
                     elementVariables["end"] = element.innerText;
                 }
                 
