@@ -71,9 +71,9 @@ export function setElementTimeline(element, animType: string, elementProperties:
                     element.innerText = elementVariables["countStart"];
                 }
 
-                if(elementVariables.hasOwnProperty("end") && elementVariables["end"] == "inherit") {
-                    console.log("Inheriting end value:" + elementVariables["end"]);
-                    elementVariables["end"] = element.innerText;
+                if(elementProperties.hasOwnProperty("end") && elementProperties["end"] == "inherit") {
+                    console.log("Inheriting end value:" + elementProperties["end"]);
+                    elementProperties["end"] = element.innerText;
                 }
                 
                 tl[tween](element, elementVariables, 0);
