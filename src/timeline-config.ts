@@ -70,6 +70,10 @@ export function setElementTimeline(element, animType: string, elementProperties:
                 if(elementVariables.hasOwnProperty("countStart") && elementVariables["countStart"] !== "inherit") {
                     element.innerText = elementVariables["countStart"];
                 }
+
+                if(elementVariables.hasOwnProperty("end") && elementVariables["end"] == "inherit") {
+                    elementVariables["end"] = element.innerText;
+                }
                 
                 tl[tween](element, elementVariables, 0);
             break;
