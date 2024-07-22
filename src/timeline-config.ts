@@ -67,13 +67,13 @@ export function setElementTimeline(element, animType: string, elementProperties:
                 counterTl.repeatDelay(parseFloat(elementVariables["repeatDelay"]));
                 counterTl.yoyo(elementVariables["yoyo"]);
 
+                // First check if the start value is set to inherit
+                if(elementVariables.hasOwnProperty("end") && elementVariables["end"] == "inherit") {
+                    elementVariables["end"] = element.innerText;
+                }
+                // Now we can reset the element text to the start value
                 if(elementVariables.hasOwnProperty("countStart") && elementVariables["countStart"] !== "inherit") {
                     element.innerText = elementVariables["countStart"];
-                }
-
-                if(elementProperties.hasOwnProperty("end") && elementProperties["end"] == "inherit") {
-                    console.log("Inheriting end value:" + elementProperties["end"]);
-                    elementProperties["end"] = element.innerText;
                 }
                 
                 tl[tween](element, elementVariables, 0);
