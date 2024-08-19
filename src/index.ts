@@ -585,19 +585,15 @@ let lastPageHeight = document.documentElement.scrollHeight;
 let pageLoaded = false
 
 const refreshScrollTrigger = () => {
-    console.log(pageLoaded);
     const currentPageHeight = document.documentElement.scrollHeight;
     if (lastPageHeight !== currentPageHeight && pageLoaded) {
         ScrollTrigger.refresh();
-        console.log("Refreshed ScrollTrigger");
         initializeGroups();
         if (document.querySelector(`[${GROUP}]`)) {
             gsap.set(`[${GROUP}]`, { opacity: 1 });
         }
     }
-    // console.log("Last Height: ", lastPageHeight);
     lastPageHeight = currentPageHeight;
-    // console.log("Current Height: ", currentPageHeight);
 };
 
 // Listen for resize events
