@@ -582,17 +582,22 @@ initializeGroups();
 Refresh ScrollTrigger when page height change
 ==================== */
 let lastPageHeight = document.documentElement.scrollHeight;
+let pageLoaded = false
 
 const refreshScrollTrigger = () => {
+    console.log(pageLoaded);
     const currentPageHeight = document.documentElement.scrollHeight;
-    if (lastPageHeight !== currentPageHeight) {
+    if (lastPageHeight !== currentPageHeight && pageLoaded) {
         ScrollTrigger.refresh();
+        console.log("Refreshed ScrollTrigger");
         initializeGroups();
         if (document.querySelector(`[${GROUP}]`)) {
             gsap.set(`[${GROUP}]`, { opacity: 1 });
         }
     }
+    // console.log("Last Height: ", lastPageHeight);
     lastPageHeight = currentPageHeight;
+    // console.log("Current Height: ", currentPageHeight);
 };
 
 // Listen for resize events
@@ -600,9 +605,13 @@ window.addEventListener("resize", refreshScrollTrigger);
 
 // Observe content changes (mutations)
 const observer = new MutationObserver(refreshScrollTrigger);
-observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+observer.observe(document.body, { childList: true, subtree: true });
 
 // Clear interval on page unload (to prevent memory leaks)
 window.addEventListener("beforeunload", () => {
     observer.disconnect();
+});
+
+window.addEventListener("load", () => {
+    pageLoaded = true;
 });
