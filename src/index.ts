@@ -5,7 +5,7 @@ import { TextPlugin } from "gsap/TextPlugin";
 import { RoughEase } from "gsap/EasePack";
 
 import { setElementTimeline } from './timeline-config';
-import { getAttributeAsBoolean, getAttributeAsFloat, getAttributeAsString } from './utils';
+import { getAttributeAsBoolean, getAttributeAsFloat, getAttributeAsString, parseBoolean } from './utils';
 
 /* ====================
 Initialization
@@ -556,7 +556,7 @@ function createGroupTrigger(groupTl, trigger, groupTriggers, groupVariables, gro
                     trigger: groupTriggers,
                     start: groupVariables[SCROLL_START],
                     end: groupVariables[SCROLL_END],
-                    markers: groupVariables[MARKERS],
+                    markers: parseBoolean(groupVariables[MARKERS]),
                     scrub: scrub,
                     toggleActions: scrub !== false ? groupVariables[TOGGLE_ACTIONS] : "play none none reverse"
                 }
