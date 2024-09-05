@@ -2,7 +2,6 @@ import SplitType from "split-type";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
-import { RoughEase } from "gsap/EasePack";
 
 import { setElementTimeline } from './timeline-config';
 import { getAttributeAsBoolean, getAttributeAsFloat, getAttributeAsString, parseBoolean } from './utils';
@@ -601,7 +600,7 @@ window.addEventListener("resize", refreshScrollTrigger);
 
 // Observe content changes (mutations)
 const observer = new MutationObserver(refreshScrollTrigger);
-observer.observe(document.body, { childList: true, subtree: true });
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
 // Clear interval on page unload (to prevent memory leaks)
 window.addEventListener("beforeunload", () => {
