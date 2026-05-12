@@ -2,6 +2,8 @@ import SplitType from "split-type";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
+import { SplitText } from "gsap/SplitText";
+import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 
 import { setElementTimeline } from './timeline-config';
 import { getAttributeAsBoolean, getAttributeAsFloat, getAttributeAsString, parseBoolean } from './utils';
@@ -12,8 +14,10 @@ Initialization
 (window as any).gsap = gsap;
 (window as any).ScrollTrigger = ScrollTrigger;
 (window as any).SplitType = SplitType;
+(window as any).SplitText = SplitText;
+(window as any).MotionPathPlugin = MotionPathPlugin;
 // Register GSAP
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
+gsap.registerPlugin(ScrollTrigger, TextPlugin, SplitText, MotionPathPlugin);
 
 /* ====================
 Naming
